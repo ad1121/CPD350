@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogos de Raciocínio</title>
     <style>
+        /* Estilos globais */
         * {
             margin: 0;
             padding: 0;
@@ -76,8 +76,8 @@
             color: white;
         }
 
-        /* Menu de Configuração */
-        .game-menu {
+        /* Tela de Jogo */
+        .game-screen {
             display: none;
             flex-direction: column;
             gap: 15px;
@@ -99,140 +99,38 @@
             background: #ccc;
         }
 
-        .difficulty-group, .mode-group {
+        .game-area {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 20px;
+            align-items: center;
         }
 
-        .difficulty-group label, .mode-group label {
-            font-weight: 600;
-            color: #555;
-        }
-
-        .difficulty-buttons, .mode-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .difficulty-btn, .mode-btn {
-            flex: 1;
-            min-width: 80px;
-            padding: 12px;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .difficulty-btn:hover, .mode-btn:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .difficulty-btn.active, .mode-btn.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .color-picker-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .color-picker-group label {
-            font-weight: 600;
-            color: #555;
-        }
-
-        .color-input {
-            width: 100%;
-            height: 50px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        .start-btn {
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .start-btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* Tela de Jogo */
-        .game-screen {
-            display: none;
-        }
-
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .info-item {
-            text-align: center;
-        }
-
-        .info-label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: #333;
-        }
-
-        /* Board Racha Cuca */
         .board {
             display: grid;
             gap: 8px;
-            margin: 0 auto 20px;
             background: #e0e0e0;
             padding: 15px;
             border-radius: 15px;
             box-shadow: inset 0 4px 8px rgba(0,0,0,0.1);
         }
 
-        .tile {
-            aspect-ratio: 1;
+        .tile, .cell {
+            width: 60px;
+            height: 60px;
             background: white;
             border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 24px;
-            font-weight: 700;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            user-select: none;
         }
 
-        .tile:hover {
+        .tile:hover, .cell:hover {
             transform: scale(0.95);
         }
 
@@ -241,246 +139,104 @@
             box-shadow: none;
             cursor: default;
         }
-
-        .tile.empty:hover {
-            transform: none;
-        }
-
-        /* Board Dama */
-        .checkers-board {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 0;
-            margin: 0 auto 20px;
-            border: 4px solid #333;
-            border-radius: 10px;
-            overflow: hidden;
-            max-width: 500px;
-            aspect-ratio: 1;
-        }
-
-        .checkers-cell {
-            aspect-ratio: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .checkers-cell.light {
-            background: #f0d9b5;
-        }
-
-        .checkers-cell.dark {
-            background: #b58863;
-        }
-
-        .checkers-cell.selected {
-            background: #7fc97f;
-        }
-
-        .checkers-cell.possible-move {
-            background: #a8d5ba;
-        }
-
-        .checkers-cell.ai-thinking {
-            background: #ffd700;
-        }
-
-        .piece {
-            width: 70%;
-            height: 70%;
-            border-radius: 50%;
-            border: 3px solid #333;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-
-        .piece:hover {
-            transform: scale(1.1);
-        }
-
-        .piece.red {
-            background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
-        }
-
-        .piece.black {
-            background: radial-gradient(circle at 30% 30%, #495057, #212529);
-        }
-
-        .piece.king::after {
-            content: '♔';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            color: gold;
-        }
-
-        .game-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .game-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .reset-btn {
-            background: #ff6b6b;
-            color: white;
-        }
-
-        .reset-btn:hover {
-            background: #ff5252;
-        }
-
-        .menu-btn {
-            background: #667eea;
-            color: white;
-        }
-
-        .menu-btn:hover {
-            background: #5568d3;
-        }
-
-        .records {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .records h3 {
-            margin-bottom: 10px;
-            color: #333;
-            font-size: 16px;
-        }
-
-        .record-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .record-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 12px;
-            background: white;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .record-time {
-            font-weight: 600;
-            color: #667eea;
-        }
-
-        .win-message {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            text-align: center;
-            z-index: 1000;
-        }
-
-        .win-message.show {
-            display: block;
-            animation: popup 0.5s ease-out;
-        }
-
-        @keyframes popup {
-            0% {
-                transform: translate(-50%, -50%) scale(0.5);
-                opacity: 0;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
-        }
-
-        .win-message h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 32px;
-        }
-
-        .win-message p {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 18px;
-        }
-
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-
-        .overlay.show {
-            display: block;
-        }
-
-        .current-player {
-            text-align: center;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-weight: 600;
-            font-size: 18px;
-        }
-
-        .ai-thinking {
-            text-align: center;
-            padding: 10px;
-            background: #fff3cd;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-weight: 600;
-            color: #856404;
-            display: none;
-        }
-
-        .ai-thinking.show {
-            display: block;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎮 JOGOS DE RACIOCÍNIO</h1>
+        <h1>🎮 Jogos de Raciocínio</h1>
 
-        <div id="mainMenu">
-            <!-- Código do menu principal -->
+        <!-- Menu Principal -->
+        <div id="mainMenu" class="main-menu">
+            <div class="game-card" onclick="selectGame('rachacuca')">
+                <h2>🧩 Racha Cuca</h2>
+                <p>Deslize as peças para ordenar os números.</p>
+            </div>
+            <div class="game-card" onclick="selectGame('dama')">
+                <h2>⚫⚪ Dama</h2>
+                <p>Jogo clássico contra o computador ou um amigo.</p>
+            </div>
         </div>
 
-        <script>
-            // Código JavaScript aqui
-        </script>
+        <!-- Tela de Jogo -->
+        <div id="gameScreen" class="game-screen">
+            <button class="back-btn" onclick="backToMenu()">← Voltar</button>
+            <div id="gameArea" class="game-area"></div>
+        </div>
     </div>
+
+    <script>
+        const mainMenu = document.getElementById('mainMenu');
+        const gameScreen = document.getElementById('gameScreen');
+        const gameArea = document.getElementById('gameArea');
+
+        let currentGame = null;
+
+        // Função para selecionar o jogo
+        function selectGame(game) {
+            currentGame = game;
+            mainMenu.style.display = 'none';
+            gameScreen.style.display = 'flex';
+            if (game === 'rachacuca') {
+                startRachaCuca();
+            } else if (game === 'dama') {
+                startDama();
+            }
+        }
+
+        // Função para voltar ao menu principal
+        function backToMenu() {
+            gameScreen.style.display = 'none';
+            mainMenu.style.display = 'flex';
+            gameArea.innerHTML = ''; // Limpa a área de jogo
+        }
+
+        // Inicia o jogo Racha Cuca
+        function startRachaCuca() {
+            const size = 3; // Tamanho do tabuleiro (3x3)
+            const numbers = [...Array(size * size).keys()].sort(() => Math.random() - 0.5); // Embaralha os números
+            gameArea.innerHTML = `<div class="board" style="grid-template-columns: repeat(${size}, 1fr);"></div>`;
+            const board = gameArea.querySelector('.board');
+
+            numbers.forEach((num, index) => {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+                if (num === 0) {
+                    tile.classList.add('empty');
+                } else {
+                    tile.textContent = num;
+                    tile.addEventListener('click', () => moveTile(index, size, board, numbers));
+                }
+                board.appendChild(tile);
+            });
+        }
+
+        // Move a peça no Racha Cuca
+        function moveTile(index, size, board, numbers) {
+            const emptyIndex = numbers.indexOf(0);
+            const validMoves = [emptyIndex - 1, emptyIndex + 1, emptyIndex - size, emptyIndex + size];
+            if (validMoves.includes(index)) {
+                [numbers[emptyIndex], numbers[index]] = [numbers[index], numbers[emptyIndex]];
+                startRachaCuca(); // Re-renderiza o tabuleiro
+            }
+        }
+
+        // Inicia o jogo de Dama
+        function startDama() {
+            const size = 8; // Tamanho do tabuleiro (8x8)
+            gameArea.innerHTML = `<div class="board" style="grid-template-columns: repeat(${size}, 1fr);"></div>`;
+            const board = gameArea.querySelector('.board');
+
+            for (let i = 0; i < size * size; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                if ((Math.floor(i / size) + i) % 2 === 0) {
+                    cell.style.background = '#b58863'; // Casas escuras
+                } else {
+                    cell.style.background = '#f0d9b5'; // Casas claras
+                }
+                board.appendChild(cell);
+            }
+        }
+    </script>
 </body>
 </html>
