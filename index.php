@@ -1,642 +1,942 @@
-<?php
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: login.php");
-    exit;
-}
-
-$usuario = $_SESSION['usuario'];
-
-// ===============================
-// Carregar demandas do JSON
-// ===============================
-if (!file_exists("demandas.json")) {
-    file_put_contents("demandas.json", json_encode([]));
-}
-$demandas = json_decode(file_get_contents("demandas.json"), true);
-
-// ===============================
-// Carregar comentários do JSON
-// ===============================
-if (!file_exists("comentarios.json")) {
-    file_put_contents("comentarios.json", json_encode([]));
-}
-$comentarios = json_decode(file_get_contents("comentarios.json"), true);
-
-// ===============================
-// Criar nova demanda
-// ===============================
-if (isset($_POST['nova_titulo']) && isset($_POST['nova_descricao'])) {
-    $nova = [
-        "id" => count($demandas) > 0 ? max(array_column($demandas, "id")) + 1 : 1,
-        "titulo" => $_POST['nova_titulo'],
-        "descricao" => $_POST['nova_descricao'],
-        "status" => "pendente", // pendente, aceita, concluida, finalizada
-        "responsavel" => null, // quem aceitou a demanda
-        "data_criacao" => date("Y-m-d H:i:s"),
-        "data_aceite" => null,
-        "data_finalizacao" => null
-    ];
-    $demandas[] = $nova;
-    file_put_contents("demandas.json", json_encode($demandas, JSON_PRETTY_PRINT));
-    
-    // Retorna resposta JSON para atualização em tempo real
-    if (isset($_POST['ajax'])) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'demanda' => $nova]);
-        exit;
-    }
-    
-    header("Location: index.php");
-    exit;
-}
-
-// ===============================
-// Aceitar demanda
-// ===============================
-if (isset($_POST['aceitar']) && isset($_POST['id'])) {
-    $id_demanda = $_POST['id'];
-    foreach ($demandas as &$d) {
-        if ($d["id"] == $id_demanda) {
-            $d["status"] = "aceita";
-            $d["responsavel"] = $usuario;
-            $d["data_aceite"] = date("Y-m-d H:i:s");
-            break;
-        }
-    }
-    file_put_contents("demandas.json", json_encode($demandas, JSON_PRETTY_PRINT));
-    header("Location: index.php#minhas");
-    exit;
-}
-
-// ===============================
-// Comentários
-// ===============================
-if (isset($_POST['comentario']) && isset($_POST['id'])) {
-    $id_demanda = $_POST['id'];
-    $aba_atual = $_POST['aba_atual'] ?? 'minhas';
-    
-    if (!isset($comentarios[$id_demanda])) {
-        $comentarios[$id_demanda] = [];
-    }
-    $comentarios[$id_demanda][] = [
-        "usuario" => $usuario,
-        "texto" => $_POST['comentario'],
-        "data" => date("Y-m-d H:i:s")
-    ];
-    file_put_contents("comentarios.json", json_encode($comentarios, JSON_PRETTY_PRINT));
-    header("Location: index.php#" . $aba_atual);
-    exit;
-}
-
-// ===============================
-// Marcar como concluída (Maycon/Jader/Fabio)
-// ===============================
-if (isset($_POST['concluir']) && isset($_POST['id'])) {
-    $id_demanda = $_POST['id'];
-    foreach ($demandas as &$d) {
-        if ($d["id"] == $id_demanda && $d["responsavel"] == $usuario) {
-            $d["status"] = "concluida";
-            break;
-        }
-    }
-    file_put_contents("demandas.json", json_encode($demandas, JSON_PRETTY_PRINT));
-    header("Location: index.php#minhas");
-    exit;
-}
-
-// ===============================
-// Finalizar de vez (Denilson)
-// ===============================
-if (isset($_POST['finalizar_de_vez']) && isset($_POST['id'])) {
-    $id_demanda = $_POST['id'];
-    foreach ($demandas as &$d) {
-        if ($d["id"] == $id_demanda) {
-            $d["status"] = "finalizada";
-            $d["data_finalizacao"] = date("Y-m-d H:i:s");
-            break;
-        }
-    }
-    file_put_contents("demandas.json", json_encode($demandas, JSON_PRETTY_PRINT));
-    header("Location: index.php#concluidas");
-    exit;
-}
-
-// ===============================
-// API para fornecer todos os dados
-// ===============================
-if (isset($_GET['get_all_data'])) {
-    header('Content-Type: application/json');
-    echo json_encode([
-        'demandas' => $demandas,
-        'comentarios' => $comentarios,
-        'usuario_atual' => $usuario
-    ]);
-    exit;
-}
-?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>GESTÃO CPD 350</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .pulse-animation {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { background-color: #f8f9fa; }
-            50% { background-color: #e3f2fd; }
-            100% { background-color: #f8f9fa; }
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+<title>Space Impact — Versão Completa (Single File)</title>
+<style>
+  :root{
+    --bg:#02030a;
+    --panel:#071126;
+    --accent:#4ee1ff;
+    --muted:#9fb7c8;
+  }
+  body,html{
+    height:100%;
+    margin:0;
+    background: radial-gradient(ellipse at center, #021224 0%, #000 70%);
+    color:var(--muted);
+    font-family: Inter, Roboto, Arial, sans-serif;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+  }
+
+  .wrap{
+    max-width:420px;
+    margin:12px auto;
+    padding:12px;
+  }
+
+  header{
+    text-align:center;
+    margin-bottom:8px;
+  }
+  h1{ margin:6px 0 2px; color:var(--accent); font-size:20px;}
+  p.small{ margin:0 0 8px; font-size:12px; color:#9ab;}
+
+  .panel{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.03);
+    padding:10px;
+    border-radius:8px;
+  }
+
+  label{display:block; font-size:13px; margin:6px 0 3px;}
+  input[type="text"]{ width:100%; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:var(--muted); }
+  .row{ display:flex; gap:8px; }
+  button{
+    background:linear-gradient(180deg,var(--accent), #2ac6e6);
+    color:#002;
+    border:none;
+    padding:8px 10px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  button.ghost{
+    background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.04);
+  }
+  .center{ text-align:center; }
+
+  /* Game area */
+  #game-wrapper{
+    margin-top:12px;
+    display:none;
+    position:relative;
+    width:100%;
+    height:640px; /* vertical orientation */
+    max-width:420px;
+    background:linear-gradient(#000 0%, rgba(0,0,0,0.6) 100%);
+    border-radius:8px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,0.04);
+  }
+  canvas{ display:block; background:transparent; width:100%; height:100%; }
+
+  /* HUD */
+  .hud{
+    position:absolute;
+    top:8px;
+    left:8px;
+    right:8px;
+    display:flex;
+    justify-content:space-between;
+    pointer-events:none;
+  }
+  .hud .left, .hud .right{ pointer-events:auto; display:flex; gap:6px; align-items:center;}
+  .stat{ background:rgba(0,0,0,0.4); padding:6px 8px; border-radius:6px; font-size:13px; color:var(--muted); }
+
+  .controls{
+    position:absolute;
+    bottom:10px;
+    left:10px;
+    right:10px;
+    display:flex;
+    justify-content:space-between;
+    pointer-events:none;
+  }
+  .touch-controls{ pointer-events:auto; display:flex; gap:8px; align-items:center; }
+  .btn-circle{ width:56px; height:56px; border-radius:50%; background:rgba(255,255,255,0.04); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--muted); box-shadow:inset 0 -6px 12px rgba(0,0,0,0.4); }
+  .btn-small{ padding:6px 10px; border-radius:6px; background:rgba(255,255,255,0.02); color:var(--muted); }
+
+  /* overlays */
+  .overlay{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.55));
+    backdrop-filter: blur(2px);
+    z-index:30;
+    color:var(--muted);
+  }
+  .menu{
+    width:90%;
+    max-width:380px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:16px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.03);
+    text-align:center;
+  }
+  .small-muted{ font-size:12px; color:#8aa; margin-top:8px; }
+
+  /* scoreboard list */
+  .scores{ max-height:160px; overflow:auto; text-align:left; margin-top:8px; }
+  .score-row{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,0.02); font-size:13px; color:var(--muted); }
+
+  footer{ text-align:center; margin-top:12px; font-size:12px; color:#7f9;}
+  @media (max-width:420px){
+    #game-wrapper{ height:720px; } /* taller on small phones */
+  }
+</style>
 </head>
-<body class="bg-light">
+<body>
+<div class="wrap">
+  <header>
+    <h1>Space Impact — Remake</h1>
+    <p class="small">Versão completa: 5 fases, power-ups, controles: teclado ou toque — Salva placar em JSON</p>
+  </header>
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>🖥️ GESTÃO CPD 350</h2>
-        <div>
-            <span id="status-connection" class="badge bg-success me-2">Online</span>
-            <a href="alterar_senha.php" class="btn btn-secondary btn-sm">Alterar Senha</a>
-            <a href="logout.php" class="btn btn-danger btn-sm">Sair</a>
-        </div>
-    </div>
-    <p>Usuário logado: <b><?php echo $usuario; ?></b></p>
+  <div class="panel" id="setup-panel">
+    <label for="nick">Seu nick:</label>
+    <input id="nick" type="text" placeholder="Ex: Astro123" maxlength="16" />
 
-    <!-- Formulário para criar nova demanda -->
-    <div class="card mb-4 shadow-sm">
-        <div class="card-body">
-            <h5 class="card-title">➕ Criar Nova Demanda</h5>
-            <form id="form-nova-demanda" class="row g-2">
-                <div class="col-md-5">
-                    <input type="text" name="nova_titulo" class="form-control" placeholder="Título da demanda" required>
-                </div>
-                <div class="col-md-5">
-                    <input type="text" name="nova_descricao" class="form-control" placeholder="Descrição" required>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-success w-100">Adicionar</button>
-                </div>
-            </form>
-        </div>
+    <label>Escolha o controle:</label>
+    <div class="row">
+      <button id="control-key">Setas (teclado)</button>
+      <button id="control-touch" class="ghost">Toque (dedo)</button>
     </div>
 
-    <!-- Abas -->
-    <ul class="nav nav-tabs mb-3" id="main-tabs">
-        <li class="nav-item">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#disponiveis">
-                Disponíveis <span id="badge-disponiveis" class="badge bg-info ms-1"></span>
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#minhas">
-                Minhas Demandas <span id="badge-minhas" class="badge bg-warning ms-1"></span>
-            </button>
-        </li>
-        <?php if ($usuario === "Denilson"): ?>
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#concluidas">
-                Aguardando Aprovação <span id="badge-concluidas" class="badge bg-success ms-1"></span>
-            </button>
-        </li>
-        <?php endif; ?>
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#finalizadas">
-                Finalizadas <span id="badge-finalizadas" class="badge bg-secondary ms-1"></span>
-            </button>
-        </li>
-    </ul>
-
-    <div class="tab-content">
-        <!-- Demandas Disponíveis -->
-        <div class="tab-pane fade show active" id="disponiveis">
-            <h5>🆓 Demandas Disponíveis para Aceitar</h5>
-            <div class="row" id="container-disponiveis">
-                <?php foreach ($demandas as $d): ?>
-                    <?php if ($d["status"] === "pendente"): ?>
-                        <div class="col-md-4 mb-3" data-demanda-id="<?php echo $d['id']; ?>">
-                            <div class="card shadow-sm h-100 border-info">
-                                <div class="card-body">
-                                    <h5 class="card-title text-info"><?php echo htmlspecialchars($d["titulo"]); ?></h5>
-                                    <p class="card-text"><?php echo htmlspecialchars($d["descricao"]); ?></p>
-                                    <p class="text-muted small">Criada em: <?php echo date("d/m/Y H:i", strtotime($d["data_criacao"])); ?></p>
-                                    
-                                    <form method="post">
-                                        <input type="hidden" name="id" value="<?php echo $d["id"]; ?>">
-                                        <button type="submit" name="aceitar" class="btn btn-info w-100">✋ Aceitar Demanda</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </div>
-        </div>
-
-        <!-- Minhas Demandas -->
-        <div class="tab-pane fade" id="minhas">
-            <h5>👤 Demandas sob Minha Responsabilidade</h5>
-            <div class="row" id="container-minhas">
-                <?php foreach ($demandas as $d): ?>
-                    <?php if ($d["status"] === "aceita" && $d["responsavel"] === $usuario): ?>
-                        <div class="col-md-4 mb-3" data-demanda-id="<?php echo $d['id']; ?>">
-                            <div class="card shadow-sm h-100 border-warning">
-                                <div class="card-body">
-                                    <h5 class="card-title text-warning"><?php echo htmlspecialchars($d["titulo"]); ?></h5>
-                                    <p class="card-text"><?php echo htmlspecialchars($d["descricao"]); ?></p>
-                                    <p class="text-muted small">
-                                        Aceita em: <?php echo date("d/m/Y H:i", strtotime($d["data_aceite"])); ?>
-                                    </p>
-
-                                    <!-- Comentários -->
-                                    <h6>💬 Comentários:</h6>
-                                    <div class="border rounded p-2 bg-light small mb-2 comentarios-container" style="max-height:120px;overflow-y:auto;" data-demanda-id="<?php echo $d['id']; ?>">
-                                        <?php
-                                        if (!empty($comentarios[$d["id"]])) {
-                                            foreach ($comentarios[$d["id"]] as $c) {
-                                                echo "<p><b>".htmlspecialchars($c['usuario'])."</b> (".date("d/m H:i", strtotime($c['data']))."): ".htmlspecialchars($c['texto'])."</p>";
-                                            }
-                                        } else {
-                                            echo "<p class='text-muted'>Nenhum comentário ainda.</p>";
-                                        }
-                                        ?>
-                                    </div>
-
-                                    <!-- Formulário de comentário -->
-                                    <form method="post" class="d-flex mb-2">
-                                        <input type="hidden" name="id" value="<?php echo $d["id"]; ?>">
-                                        <input type="hidden" name="aba_atual" value="minhas">
-                                        <input type="text" name="comentario" class="form-control me-2" placeholder="Escreva um comentário..." required>
-                                        <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
-                                    </form>
-
-                                    <!-- Botão de conclusão -->
-                                    <form method="post">
-                                        <input type="hidden" name="id" value="<?php echo $d["id"]; ?>">
-                                        <button type="submit" name="concluir" class="btn btn-warning w-100">✅ Marcar como Concluída</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </div>
-        </div>
-
-        <?php if ($usuario === "Denilson"): ?>
-        <!-- Aguardando Aprovação (só para Denilson) -->
-        <div class="tab-pane fade" id="concluidas">
-            <h5>⏳ Demandas Aguardando Aprovação Final</h5>
-            <div class="row" id="container-concluidas">
-                <?php foreach ($demandas as $d): ?>
-                    <?php if ($d["status"] === "concluida"): ?>
-                        <div class="col-md-4 mb-3" data-demanda-id="<?php echo $d['id']; ?>">
-                            <div class="card shadow-sm h-100 border-success">
-                                <div class="card-body">
-                                    <h5 class="card-title text-success"><?php echo htmlspecialchars($d["titulo"]); ?></h5>
-                                    <p class="card-text"><?php echo htmlspecialchars($d["descricao"]); ?></p>
-                                    <p class="text-muted small">
-                                        Responsável: <b><?php echo htmlspecialchars($d["responsavel"]); ?></b><br>
-                                        Aceita em: <?php echo date("d/m/Y H:i", strtotime($d["data_aceite"])); ?>
-                                    </p>
-
-                                    <!-- Comentários -->
-                                    <h6>💬 Comentários:</h6>
-                                    <div class="border rounded p-2 bg-light small mb-2 comentarios-container" style="max-height:120px;overflow-y:auto;" data-demanda-id="<?php echo $d['id']; ?>">
-                                        <?php
-                                        if (!empty($comentarios[$d["id"]])) {
-                                            foreach ($comentarios[$d["id"]] as $c) {
-                                                echo "<p><b>".htmlspecialchars($c['usuario'])."</b> (".date("d/m H:i", strtotime($c['data']))."): ".htmlspecialchars($c['texto'])."</p>";
-                                            }
-                                        } else {
-                                            echo "<p class='text-muted'>Nenhum comentário ainda.</p>";
-                                        }
-                                        ?>
-                                    </div>
-
-                                    <!-- Formulário de comentário -->
-                                    <form method="post" class="d-flex mb-2">
-                                        <input type="hidden" name="id" value="<?php echo $d["id"]; ?>">
-                                        <input type="hidden" name="aba_atual" value="concluidas">
-                                        <input type="text" name="comentario" class="form-control me-2" placeholder="Escreva um comentário..." required>
-                                        <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
-                                    </form>
-
-                                    <!-- Finalizar definitivamente -->
-                                    <form method="post">
-                                        <input type="hidden" name="id" value="<?php echo $d["id"]; ?>">
-                                        <button type="submit" name="finalizar_de_vez" class="btn btn-success w-100">🏁 Finalizar Definitivamente</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <!-- Finalizadas -->
-        <div class="tab-pane fade" id="finalizadas">
-            <h5>🏆 Demandas Finalizadas</h5>
-            <div class="row" id="container-finalizadas">
-                <?php foreach ($demandas as $d): ?>
-                    <?php 
-                    if ($d["status"] === "finalizada") {
-                        // Para usuários comuns, só mostra as que ele foi responsável
-                        if ($usuario !== "Denilson" && $d["responsavel"] !== $usuario) {
-                            continue;
-                        }
-                    ?>
-                        <div class="col-md-4 mb-3" data-demanda-id="<?php echo $d['id']; ?>">
-                            <div class="card border-success shadow-sm h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title text-success"><?php echo htmlspecialchars($d["titulo"]); ?></h5>
-                                    <p class="card-text"><?php echo htmlspecialchars($d["descricao"]); ?></p>
-                                    <p class="text-muted small">
-                                        <b>Responsável:</b> <?php echo htmlspecialchars($d["responsavel"] ?? 'N/A'); ?><br>
-                                        <b>Finalizada em:</b> <?php echo $d["data_finalizacao"] ? date("d/m/Y H:i", strtotime($d["data_finalizacao"])) : 'N/A'; ?>
-                                    </p>
-                                    
-                                    <!-- Comentários (apenas visualização) -->
-                                    <?php if (!empty($comentarios[$d["id"]])): ?>
-                                    <h6>💬 Comentários:</h6>
-                                    <div class="border rounded p-2 bg-light small comentarios-container" style="max-height:120px;overflow-y:auto;" data-demanda-id="<?php echo $d['id']; ?>">
-                                        <?php
-                                        foreach ($comentarios[$d["id"]] as $c) {
-                                            echo "<p><b>".htmlspecialchars($c['usuario'])."</b> (".date("d/m H:i", strtotime($c['data']))."): ".htmlspecialchars($c['texto'])."</p>";
-                                        }
-                                        ?>
-                                    </div>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-                    <?php 
-                    }
-                    ?>
-                <?php endforeach; ?>
-            </div>
-        </div>
+    <label style="margin-top:8px;">Opções:</label>
+    <div class="row">
+      <button id="btn-start">Iniciar Jogo</button>
+      <button id="btn-show-scores" class="ghost">Placar (JSON)</button>
+      <button id="btn-clear-scores" class="ghost">Limpar placares</button>
     </div>
+    <p class="small-muted">Dica: durante o jogo toque em "Full" para tela cheia. Quando terminar, faça download do JSON de placares.</p>
+  </div>
+
+  <!-- Game area -->
+  <div id="game-wrapper" class="panel">
+    <canvas id="gameCanvas" width="480" height="800"></canvas>
+
+    <div class="hud">
+      <div class="left">
+        <div class="stat" id="stat-nick">Nick: —</div>
+        <div class="stat" id="stat-lives">Vidas: 3</div>
+        <div class="stat" id="stat-power">Power: —</div>
+      </div>
+      <div class="right">
+        <div class="stat" id="stat-level">Fase: 1</div>
+        <div class="stat" id="stat-score">Pontuação: 0</div>
+        <div class="stat"><button id="btn-full" class="btn-small">Full</button></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="touch-controls" id="touch-left" style="display:none;">
+        <div class="btn-circle" id="btn-up">▲</div>
+        <div class="btn-circle" id="btn-down">▼</div>
+      </div>
+      <div style="pointer-events:none;"></div>
+      <div class="touch-controls" id="touch-right" style="display:none;">
+        <div class="btn-circle" id="btn-shot">●</div>
+      </div>
+    </div>
+
+    <!-- overlay menus -->
+    <div id="overlay-menu" class="overlay" style="display:flex;align-items:center;justify-content:center;">
+      <div class="menu">
+        <h2>Pronto para voar?</h2>
+        <p id="menu-sub" class="small-muted">Nome: — | Controle: —</p>
+        <div style="margin-top:12px;">
+          <button id="menu-play">Começar</button>
+          <button id="menu-back" class="ghost">Voltar</button>
+        </div>
+        <div class="small-muted" style="margin-top:8px;">Objetivo: sobreviva, passe por 5 fases e colete power-ups.</div>
+      </div>
+    </div>
+
+    <div id="overlay-gameover" class="overlay" style="display:none;">
+      <div class="menu">
+        <h2 id="go-title">Game Over</h2>
+        <p id="go-text" class="small-muted">Você marcou <span id="final-score">0</span> pontos.</p>
+        <div style="margin-top:10px;">
+          <button id="go-restart">Jogar novamente</button>
+          <button id="go-menu" class="ghost">Voltar ao menu</button>
+        </div>
+        <div class="small-muted" style="margin-top:8px;">
+          <button id="download-json" class="ghost">Baixar JSON de placares</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="scores-panel" class="panel" style="display:none; margin-top:12px;">
+    <h3>Placar salvo (localStorage)</h3>
+    <div class="scores" id="scores-list"></div>
+    <div style="margin-top:8px; text-align:center;">
+      <button id="download-json-2">Baixar JSON</button>
+      <button id="close-scores" class="ghost">Fechar</button>
+    </div>
+  </div>
+
+  <footer>
+    <small>Feito com ♥ — espaço para melhorias: sons, sprites melhores e mais inimigos!</small>
+  </footer>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-let lastCheck = new Date().toISOString().slice(0, 19).replace('T', ' ');
+/*
+  Space Impact — Single file
+  Recursos:
+   - Canvas-based game vertical orientation
+   - 5 fases com dificuldade crescente
+   - Power-up temporário (Rapid Fire ou Shield)
+   - Controles: teclado (setas) ou toque (arrastar vertical + botão tiro)
+   - Fullscreen toggle
+   - Salva placares (nick, score, level, date) em localStorage como JSON array
+   - Botão para baixar JSON
+*/
 
-// Formulário AJAX para criar demanda
-document.getElementById('form-nova-demanda').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    formData.append('ajax', '1');
-    
-    fetch('index.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            this.reset();
-            // A atualização será feita pelo polling
-            document.getElementById('status-connection').textContent = 'Demanda criada!';
-            document.getElementById('status-connection').className = 'badge bg-success me-2';
-            setTimeout(() => {
-                document.getElementById('status-connection').textContent = 'Online';
-            }, 2000);
-        }
-    })
-    .catch(error => {
-        console.error('Erro:', error);
-        document.getElementById('status-connection').textContent = 'Erro';
-        document.getElementById('status-connection').className = 'badge bg-danger me-2';
-    });
+// -------- Config e estado --------
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+let GAME = {
+  running:false,
+  control:'keys', // 'keys' or 'touch'
+  nick:'Player',
+  lives:3,
+  score:0,
+  level:1,
+  maxLevel:5,
+  width:canvas.width,
+  height:canvas.height,
+  lastTime:0,
+  enemyTimer:0,
+  enemyInterval:1200, // ms
+  bullets:[],
+  enemies:[],
+  powerups:[],
+  player:null,
+  paused:false,
+  powerActive:null,
+  powerTimer:0
+};
+
+// DOM elements
+const setupPanel = document.getElementById('setup-panel');
+const overlayMenu = document.getElementById('overlay-menu');
+const overlayGameover = document.getElementById('overlay-gameover');
+const scoresPanel = document.getElementById('scores-panel');
+const scoresList = document.getElementById('scores-list');
+
+const statNick = document.getElementById('stat-nick');
+const statLives = document.getElementById('stat-lives');
+const statScore = document.getElementById('stat-score');
+const statLevel = document.getElementById('stat-level');
+const statPower = document.getElementById('stat-power');
+
+const btnFull = document.getElementById('btn-full');
+
+// Control buttons
+const btnControlKey = document.getElementById('control-key');
+const btnControlTouch = document.getElementById('control-touch');
+const inputNick = document.getElementById('nick');
+const btnStart = document.getElementById('btn-start');
+const btnShowScores = document.getElementById('btn-show-scores');
+const btnClearScores = document.getElementById('btn-clear-scores');
+
+const touchLeft = document.getElementById('touch-left');
+const touchRight = document.getElementById('touch-right');
+const btnUp = document.getElementById('btn-up');
+const btnDown = document.getElementById('btn-down');
+const btnShot = document.getElementById('btn-shot');
+
+const menuPlay = document.getElementById('menu-play');
+const menuBack = document.getElementById('menu-back');
+const menuSub = document.getElementById('menu-sub');
+
+const goRestart = document.getElementById('go-restart');
+const goMenu = document.getElementById('go-menu');
+const downloadJsonBtn = document.getElementById('download-json');
+const finalScoreSpan = document.getElementById('final-score');
+
+const downloadJsonBtn2 = document.getElementById('download-json-2');
+const closeScores = document.getElementById('close-scores');
+
+// pick default control
+let chosenControl = 'keys'; // default
+btnControlKey.classList.add('selected');
+
+// -------- Helpers: storage & utils --------
+const STORAGE_KEY = 'space_impact_scores_v1';
+
+function loadScores(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveScoreEntry(entry){
+  const arr = loadScores();
+  arr.push(entry);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+}
+function clearScores(){
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+function downloadJSON(filename='scores.json'){
+  const data = loadScores();
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+  a.remove(); URL.revokeObjectURL(url);
+}
+
+function rand(min,max){ return Math.random()*(max-min)+min; }
+function now(){ return performance.now(); }
+
+// -------- Player & Entities --------
+function createPlayer(){
+  return {
+    x:60,
+    y:GAME.height/2,
+    w:36,
+    h:24,
+    speed:300, // px/sec vertical
+    cooldown:0,
+    fireRate:300, // ms
+    color:'#6bf',
+    shield:false
+  };
+}
+
+function spawnEnemy(type='basic'){
+  // Different enemy types per level could be added
+  const size = type==='big'? 48: (type==='fast'? 18: 28);
+  const speed = type==='fast'? rand(220,320) : (type==='big'? rand(60,110) : rand(120,180));
+  const y = rand(20, GAME.height - 20);
+  GAME.enemies.push({
+    x: GAME.width + 40,
+    y,
+    w:size,
+    h:size*0.7,
+    speed,
+    hp: type==='big'?3:1,
+    type
+  });
+}
+
+function spawnPowerup(){
+  // power types: rapid (tiro rápido), shield
+  const types = ['rapid','shield'];
+  const t = types[Math.floor(Math.random()*types.length)];
+  GAME.powerups.push({
+    x: GAME.width + 40,
+    y: rand(40, GAME.height-40),
+    size:22,
+    type: t
+  });
+}
+
+function fireBullet(fromX, fromY, speed=450){
+  GAME.bullets.push({
+    x: fromX,
+    y: fromY,
+    r:5,
+    speed
+  });
+}
+
+// -------- Game loop & logic --------
+function resetGame(){
+  GAME.running = false;
+  GAME.lives = 3;
+  GAME.score = 0;
+  GAME.level = 1;
+  GAME.enemyInterval = 1200;
+  GAME.bullets = [];
+  GAME.enemies = [];
+  GAME.powerups = [];
+  GAME.player = createPlayer();
+  GAME.lastTime = now();
+  GAME.enemyTimer = 0;
+  GAME.powerActive = null;
+  GAME.powerTimer = 0;
+  updateHUD();
+}
+
+function startGame(){
+  const nickVal = (inputNick.value || 'Player').trim().slice(0,16);
+  GAME.nick = nickVal || 'Player';
+  GAME.control = chosenControl;
+  resetGame();
+  setupPanel.style.display='none';
+  document.getElementById('game-wrapper').style.display='block';
+  overlayMenu.style.display='flex';
+  menuSub.textContent = `Nome: ${GAME.nick} | Controle: ${GAME.control === 'keys'? 'Setas' : 'Toque'}`;
+  GAME.running = false;
+}
+
+// start actual playing after pressing Play on overlay
+function beginPlay(){
+  overlayMenu.style.display='none';
+  GAME.running = true;
+  GAME.lastTime = now();
+  GAME.enemyTimer = 0;
+  requestAnimationFrame(gameLoop);
+}
+
+// game over handling
+function gameOver(){
+  GAME.running = false;
+  overlayGameover.style.display='flex';
+  finalScoreSpan.textContent = GAME.score;
+  // save score entry
+  saveScoreEntry({
+    nick: GAME.nick,
+    score: GAME.score,
+    level: GAME.level,
+    date: new Date().toISOString()
+  });
+  updateScoresList();
+}
+
+// progress to next level
+function nextLevel(){
+  if(GAME.level >= GAME.maxLevel){
+    // finished all levels -> win (end game)
+    gameOver();
+    document.getElementById('go-title').textContent = 'Você venceu!';
+    document.getElementById('go-text').textContent = `Parabéns, ${GAME.nick}! Pontuação final: ${GAME.score}`;
+    return;
+  }
+  GAME.level++;
+  // increase spawn rate and difficulty
+  GAME.enemyInterval = Math.max(350, GAME.enemyInterval * 0.8);
+  // small heal
+  GAME.lives = Math.min(5, GAME.lives + 1);
+  // clear enemy arrays
+  GAME.enemies = [];
+  GAME.powerups = [];
+  GAME.bullets = [];
+  // show short pause / banner
+  overlayMenu.style.display='flex';
+  menuSub.textContent = `Fase ${GAME.level} — prepare-se!`;
+  GAME.running = false;
+}
+
+// -------- HUD updates --------
+function updateHUD(){
+  statNick.textContent = `Nick: ${GAME.nick}`;
+  statLives.textContent = `Vidas: ${GAME.lives}`;
+  statScore.textContent = `Pontuação: ${GAME.score}`;
+  statLevel.textContent = `Fase: ${GAME.level}`;
+  statPower.textContent = GAME.powerActive ? `${GAME.powerActive} (${Math.ceil(GAME.powerTimer/1000)}s)` : '—';
+}
+
+// -------- Collision utils --------
+function rectColl(a,b){
+  return a.x < b.x + b.w &&
+         a.x + (a.w||a.r*2) > b.x &&
+         a.y < b.y + (b.h||b.size) &&
+         (a.y + (a.h||a.r*2)) > b.y;
+}
+
+// -------- Input: keyboard & touch --------
+let keyState = {up:false, down:false, shoot:false};
+window.addEventListener('keydown', e=>{
+  if(GAME.control !== 'keys') return;
+  if(e.key === 'ArrowUp') keyState.up = true;
+  if(e.key === 'ArrowDown') keyState.down = true;
+  if(e.key === ' ' || e.key === 'ArrowRight') keyState.shoot = true;
+});
+window.addEventListener('keyup', e=>{
+  if(GAME.control !== 'keys') return;
+  if(e.key === 'ArrowUp') keyState.up = false;
+  if(e.key === 'ArrowDown') keyState.down = false;
+  if(e.key === ' ' || e.key === 'ArrowRight') keyState.shoot = false;
 });
 
-// Função para atualizar contadores das abas
-function updateTabBadges() {
-    const disponiveis = document.querySelectorAll('#container-disponiveis .col-md-4').length;
-    const minhas = document.querySelectorAll('#container-minhas .col-md-4').length;
-    const finalizadas = document.querySelectorAll('#container-finalizadas .col-md-4').length;
-    
-    document.getElementById('badge-disponiveis').textContent = disponiveis || '';
-    document.getElementById('badge-minhas').textContent = minhas || '';
-    document.getElementById('badge-finalizadas').textContent = finalizadas || '';
-    
-    const badgeConcluidas = document.getElementById('badge-concluidas');
-    if (badgeConcluidas) {
-        const concluidas = document.querySelectorAll('#container-concluidas .col-md-4').length;
-        badgeConcluidas.textContent = concluidas || '';
-    }
+// Touch: we implement vertical drag for movement and button for shoot
+let touchDrag = {active:false, startY:0, lastY:0};
+canvas.addEventListener('touchstart', e=>{
+  if(GAME.control !== 'touch') return;
+  const t = e.touches[0];
+  touchDrag.active = true;
+  touchDrag.startY = t.clientY;
+  touchDrag.lastY = t.clientY;
+  e.preventDefault();
+});
+canvas.addEventListener('touchmove', e=>{
+  if(GAME.control !== 'touch' || !touchDrag.active) return;
+  const t = e.touches[0];
+  touchDrag.lastY = t.clientY;
+  e.preventDefault();
+});
+canvas.addEventListener('touchend', e=>{
+  touchDrag.active = false;
+  e.preventDefault();
+});
+
+// also support on-screen buttons (for larger hit area)
+btnUp.addEventListener('touchstart', ()=>{ keyState.up = true; });
+btnUp.addEventListener('touchend', ()=>{ keyState.up = false; });
+btnDown.addEventListener('touchstart', ()=>{ keyState.down = true; });
+btnDown.addEventListener('touchend', ()=>{ keyState.down = false; });
+btnShot.addEventListener('touchstart', ()=>{ keyState.shoot = true; setTimeout(()=> keyState.shoot=false, 120); });
+
+// keyboard shoot via Space/ArrowRight handled above
+
+// -------- Drawing utilities --------
+function drawRect(x,y,w,h,fill){
+  ctx.fillStyle = fill || '#fff';
+  ctx.fillRect(x,y,w,h);
+}
+function drawShip(x,y,w,h,shield=false){
+  // simple triangle-like ship
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.beginPath();
+  ctx.moveTo(-w/2, -h/2);
+  ctx.lineTo(w/2, 0);
+  ctx.lineTo(-w/2, h/2);
+  ctx.closePath();
+  ctx.fillStyle = '#6bf';
+  ctx.fill();
+  if(shield){
+    ctx.beginPath();
+    ctx.arc(0,0, Math.max(w,h), 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(100,220,255,0.4)';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+  }
+  ctx.restore();
 }
 
-// Função para carregar todas as demandas e comentários
-function carregarDados() {
-    fetch('index.php?get_all_data=1')
-    .then(response => response.json())
-    .then(data => {
-        atualizarInterface(data.demandas, data.comentarios);
-        // Aguardar um pouco para o DOM ser atualizado antes de contar
-        setTimeout(updateTabBadges, 100);
-        
-        document.getElementById('status-connection').textContent = 'Online';
-        document.getElementById('status-connection').className = 'badge bg-success me-2';
-    })
-    .catch(error => {
-        console.error('Erro ao carregar dados:', error);
-        document.getElementById('status-connection').textContent = 'Offline';
-        document.getElementById('status-connection').className = 'badge bg-warning me-2';
-    });
-}
+// -------- Main loop --------
+function gameLoop(t){
+  if(!GAME.running) return;
+  const dt = Math.min(40, t - GAME.lastTime);
+  GAME.lastTime = t;
 
-// Função para atualizar a interface
-function atualizarInterface(demandas, comentarios) {
-    const usuario = '<?php echo $usuario; ?>';
-    const isAdmin = usuario === 'Denilson';
-    
-    // Limpar containers
-    document.getElementById('container-disponiveis').innerHTML = '';
-    document.getElementById('container-minhas').innerHTML = '';
-    document.getElementById('container-finalizadas').innerHTML = '';
-    if (isAdmin) {
-        document.getElementById('container-concluidas').innerHTML = '';
-    }
-    
-    demandas.forEach(d => {
-        const card = criarCardDemanda(d, comentarios[d.id] || [], usuario, isAdmin);
-        
-        if (d.status === 'pendente') {
-            document.getElementById('container-disponiveis').appendChild(card);
-        } else if (d.status === 'aceita' && d.responsavel === usuario) {
-            document.getElementById('container-minhas').appendChild(card);
-        } else if (d.status === 'concluida' && isAdmin) {
-            document.getElementById('container-concluidas').appendChild(card);
-        } else if (d.status === 'finalizada') {
-            if (isAdmin || d.responsavel === usuario) {
-                document.getElementById('container-finalizadas').appendChild(card);
-            }
-        }
-    });
-}
+  // clear
+  ctx.clearRect(0,0, GAME.width, GAME.height);
 
-// Função para criar card de demanda
-function criarCardDemanda(demanda, comentarios, usuario, isAdmin) {
-    const col = document.createElement('div');
-    col.className = 'col-md-4 mb-3';
-    col.setAttribute('data-demanda-id', demanda.id);
-    
-    let borderClass = 'border-info';
-    let titleClass = 'text-info';
-    let botaoHtml = '';
-    
-    if (demanda.status === 'pendente') {
-        borderClass = 'border-info';
-        titleClass = 'text-info';
-        botaoHtml = `
-            <form method="post">
-                <input type="hidden" name="id" value="${demanda.id}">
-                <button type="submit" name="aceitar" class="btn btn-info w-100">✋ Aceitar Demanda</button>
-            </form>`;
-    } else if (demanda.status === 'aceita') {
-        borderClass = 'border-warning';
-        titleClass = 'text-warning';
-        botaoHtml = `
-            <form method="post">
-                <input type="hidden" name="id" value="${demanda.id}">
-                <button type="submit" name="concluir" class="btn btn-warning w-100">✅ Marcar como Concluída</button>
-            </form>`;
-    } else if (demanda.status === 'concluida' && isAdmin) {
-        borderClass = 'border-success';
-        titleClass = 'text-success';
-        botaoHtml = `
-            <form method="post">
-                <input type="hidden" name="id" value="${demanda.id}">
-                <button type="submit" name="finalizar_de_vez" class="btn btn-success w-100">🏁 Finalizar Definitivamente</button>
-            </form>`;
-    } else if (demanda.status === 'finalizada') {
-        borderClass = 'border-success';
-        titleClass = 'text-success';
-        botaoHtml = '';
+  // background stars (simple parallax)
+  drawBackground(t);
+
+  // spawn logic
+  GAME.enemyTimer += dt;
+  if(GAME.enemyTimer > GAME.enemyInterval){
+    GAME.enemyTimer = 0;
+    // spawn patterns based on level
+    if(GAME.level <= 2){
+      spawnEnemy('basic');
+    }else if(GAME.level === 3){
+      spawnEnemy(Math.random()<0.3 ? 'fast' : 'basic');
+    }else if(GAME.level === 4){
+      spawnEnemy(Math.random()<0.4 ? 'fast' : (Math.random()<0.15?'big':'basic'));
+    }else{
+      // level 5 harder
+      spawnEnemy(Math.random()<0.5?'fast':(Math.random()<0.2?'big':'basic'));
+      // chance to spawn twin
+      if(Math.random()<0.3) spawnEnemy('basic');
     }
-    
-    // Gerar HTML dos comentários
-    let comentariosHtml = '';
-    if (comentarios.length > 0) {
-        comentarios.forEach(c => {
-            const data = new Date(c.data).toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            comentariosHtml += `<p><b>${escapeHtml(c.usuario)}</b> (${data}): ${escapeHtml(c.texto)}</p>`;
-        });
+  }
+
+  // random powerup spawn
+  if(Math.random() < 0.002 + GAME.level*0.0008){
+    spawnPowerup();
+  }
+
+  // handle player movement
+  const p = GAME.player;
+  if(GAME.control === 'keys'){
+    if(keyState.up) p.y -= p.speed * (dt/1000);
+    if(keyState.down) p.y += p.speed * (dt/1000);
+  }else{
+    // touch: if dragging, move to touch position (vertical)
+    if(touchDrag.active){
+      // translate clientY to canvas Y
+      // get bounding rect
+      const rect = canvas.getBoundingClientRect();
+      const clientY = touchDrag.lastY;
+      const canvasY = ((clientY - rect.top) / rect.height) * GAME.height;
+      // lerp for smoothness
+      p.y += (canvasY - p.y) * 0.25;
     } else {
-        comentariosHtml = '<p class="text-muted">Nenhum comentário ainda.</p>';
+      // fallback to on-screen buttons (keyState.up/down)
+      if(keyState.up) p.y -= p.speed * (dt/1000);
+      if(keyState.down) p.y += p.speed * (dt/1000);
     }
-    
-    // Determinar aba atual para o formulário de comentário
-    let abaAtual = 'disponiveis';
-    if (demanda.status === 'aceita' && demanda.responsavel === usuario) abaAtual = 'minhas';
-    else if (demanda.status === 'concluida' && isAdmin) abaAtual = 'concluidas';
-    else if (demanda.status === 'finalizada') abaAtual = 'finalizadas';
-    
-    // Formulário de comentário (só se não for finalizada)
-    let formComentario = '';
-    if (demanda.status !== 'finalizada') {
-        formComentario = `
-            <form method="post" class="d-flex mb-2">
-                <input type="hidden" name="id" value="${demanda.id}">
-                <input type="hidden" name="aba_atual" value="${abaAtual}">
-                <input type="text" name="comentario" class="form-control me-2" placeholder="Escreva um comentário..." required>
-                <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
-            </form>`;
+  }
+  // clamp
+  p.y = Math.max(20, Math.min(GAME.height-20, p.y));
+
+  // shooting
+  p.cooldown -= dt;
+  const canShoot = p.cooldown <= 0;
+  if(keyState.shoot && canShoot){
+    // fire from front of ship
+    fireBullet(p.x + 20, p.y, 520);
+    if(GAME.powerActive === 'rapid'){
+      p.cooldown = p.fireRate * 0.25;
+    } else {
+      p.cooldown = p.fireRate;
     }
-    
-    const dataInfo = demanda.status === 'pendente' 
-        ? `Criada em: ${new Date(demanda.data_criacao).toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})}`
-        : demanda.status === 'aceita' 
-        ? `Aceita em: ${new Date(demanda.data_aceite).toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})}`
-        : demanda.status === 'concluida' 
-        ? `Responsável: <b>${escapeHtml(demanda.responsavel)}</b><br>Aceita em: ${new Date(demanda.data_aceite).toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})}`
-        : `<b>Responsável:</b> ${escapeHtml(demanda.responsavel || 'N/A')}<br><b>Finalizada em:</b> ${demanda.data_finalizacao ? new Date(demanda.data_finalizacao).toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) : 'N/A'}`;
-    
-    col.innerHTML = `
-        <div class="card shadow-sm h-100 ${borderClass}">
-            <div class="card-body">
-                <h5 class="card-title ${titleClass}">${escapeHtml(demanda.titulo)}</h5>
-                <p class="card-text">${escapeHtml(demanda.descricao)}</p>
-                <p class="text-muted small">${dataInfo}</p>
-                
-                ${demanda.status !== 'pendente' ? `
-                <h6>💬 Comentários:</h6>
-                <div class="border rounded p-2 bg-light small mb-2 comentarios-container" style="max-height:120px;overflow-y:auto;" data-demanda-id="${demanda.id}">
-                    ${comentariosHtml}
-                </div>
-                ${formComentario}
-                ` : ''}
-                
-                ${botaoHtml}
-            </div>
-        </div>`;
-    
-    return col;
-}
+  }
 
-// Função auxiliar para escapar HTML
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
+  // update bullets
+  for(let i=GAME.bullets.length-1;i>=0;i--){
+    const b = GAME.bullets[i];
+    b.x += b.speed * (dt/1000);
+    // draw
+    ctx.beginPath();
+    ctx.fillStyle = '#fffb8f';
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
+    ctx.fill();
+    // remove offscreen
+    if(b.x > GAME.width + 20) GAME.bullets.splice(i,1);
+  }
 
-// Função para carregar todas as demandas e comentários
-function carregarDados() {
-    fetch('index.php?get_all_data=1')
-    .then(response => response.json())
-    .then(data => {
-        atualizarInterface(data.demandas, data.comentarios);
-        updateTabBadges();
-        
-        document.getElementById('status-connection').textContent = 'Online';
-        document.getElementById('status-connection').className = 'badge bg-success me-2';
-    })
-    .catch(error => {
-        console.error('Erro ao carregar dados:', error);
-        document.getElementById('status-connection').textContent = 'Offline';
-        document.getElementById('status-connection').className = 'badge bg-warning me-2';
-    });
-}
+  // update enemies
+  for(let i=GAME.enemies.length-1;i>=0;i--){
+    const e = GAME.enemies[i];
+    e.x -= e.speed * (dt/1000);
+    // enemy simple shape
+    ctx.save();
+    ctx.translate(e.x, e.y);
+    ctx.fillStyle = e.type==='big' ? '#f55' : (e.type==='fast' ? '#f9a' : '#ffa94d');
+    ctx.beginPath();
+    ctx.ellipse(0,0,e.w/2,e.h/2,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
 
-// Verificar atualizações a cada 3 segundos
-setInterval(carregarDados, 3000);
-
-// Carregar dados iniciais
-document.addEventListener('DOMContentLoaded', function() {
-    carregarDados();
-    
-    const hash = window.location.hash;
-    if (hash) {
-        const tabButton = document.querySelector(`[data-bs-target="${hash}"]`);
-        if (tabButton) {
-            const tab = new bootstrap.Tab(tabButton);
-            tab.show();
+    // collision: bullets
+    for(let j=GAME.bullets.length-1;j>=0;j--){
+      const b = GAME.bullets[j];
+      if(rectColl({x:b.x-b.r,y:b.y-b.r,w:b.r*2,h:b.r*2}, {x:e.x-e.w/2,y:e.y-e.h/2,w:e.w,h:e.h})){
+        e.hp -= 1;
+        GAME.bullets.splice(j,1);
+        if(e.hp <= 0){
+          // destroyed
+          GAME.enemies.splice(i,1);
+          GAME.score += e.type==='big'? 120 : (e.type==='fast'?40:60);
+          // small chance to drop powerup on big kill
+          if(Math.random() < 0.08) spawnPowerup();
+          updateHUD();
         }
+        break;
+      }
     }
+
+    // collision: player
+    if(rectColl({x:p.x - p.w/2, y:p.y - p.h/2, w:p.w, h:p.h}, {x:e.x-e.w/2,y:e.y-e.h/2,w:e.w,h:e.h})){
+      // if shield active, destroy enemy only
+      if(GAME.player.shield){
+        // destroy enemy
+        GAME.enemies.splice(i,1);
+        GAME.score += 50;
+        updateHUD();
+      } else {
+        GAME.enemies.splice(i,1);
+        GAME.lives--;
+        updateHUD();
+        if(GAME.lives <= 0){
+          gameOver();
+          return;
+        }
+      }
+    }
+
+    // remove offscreen enemies
+    if(e.x < -80){
+      GAME.enemies.splice(i,1);
+    }
+  }
+
+  // update powerups
+  for(let i=GAME.powerups.length-1;i>=0;i--){
+    const pu = GAME.powerups[i];
+    pu.x -= 120 * (dt/1000);
+    // draw
+    ctx.save();
+    ctx.translate(pu.x, pu.y);
+    ctx.beginPath();
+    ctx.fillStyle = pu.type==='rapid' ? '#9f5' : '#5ff';
+    ctx.arc(0,0, pu.size/2, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+
+    // collect?
+    if(rectColl({x:p.x - p.w/2, y:p.y - p.h/2, w:p.w, h:p.h}, {x:pu.x-pu.size/2,y:pu.y-pu.size/2,w:pu.size,h:pu.size})){
+      // activate
+      GAME.powerActive = pu.type;
+      GAME.powerTimer = 7000 + (GAME.level*1000); // duration grows a bit with level
+      if(pu.type === 'shield'){
+        GAME.player.shield = true;
+      }
+      GAME.powerups.splice(i,1);
+      updateHUD();
+    }
+
+    if(pu.x < -40) GAME.powerups.splice(i,1);
+  }
+
+  // update power timer
+  if(GAME.powerActive){
+    GAME.powerTimer -= dt;
+    if(GAME.powerActive === 'shield'){ /* nothing extra */ }
+    if(GAME.powerTimer <= 0){
+      // deactivate
+      if(GAME.powerActive === 'shield') GAME.player.shield = false;
+      GAME.powerActive = null;
+    }
+  }
+
+  // draw player
+  drawShip(GAME.player.x, GAME.player.y, GAME.player.w, GAME.player.h, GAME.player.shield);
+
+  // draw UI crosshair for player's forward
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
+  ctx.fillRect(GAME.player.x+20, 0, 1, GAME.height);
+
+  // Level progression condition: score threshold to pass to next level
+  const threshold = GAME.level * 800;
+  if(GAME.score >= threshold){
+    // proceed to next level with short delay
+    GAME.running = false;
+    overlayMenu.style.display='flex';
+    menuSub.textContent = `Fase ${GAME.level} completa! Prepare-se para a próxima.`;
+    setTimeout(()=>{ nextLevel(); overlayMenu.style.display='none'; GAME.running=true; GAME.lastTime = now(); }, 1200);
+  }
+
+  updateHUD();
+  requestAnimationFrame(gameLoop);
+}
+
+// background starfield simple
+let starSeed = 0;
+function drawBackground(t){
+  // animated stars depending on time and level
+  const speed = 40 + GAME.level*10;
+  ctx.save();
+  ctx.fillStyle = '#000011';
+  ctx.fillRect(0,0,GAME.width,GAME.height);
+
+  // draw some stars procedurally
+  const count = 60;
+  for(let i=0;i<count;i++){
+    const x = ((i*47 + Math.floor(t/50)* (i%5+1) ) % GAME.width + (i*13)) % GAME.width;
+    const y = ( (i*73) % GAME.height + (Math.sin((t+i*12)/500)*20) );
+    const s = (i%7 === 0) ? 2.2 : (i%11===0?1.6:1);
+    ctx.fillStyle = (i%7===0)? '#ffffff' : (i%11===0?'#cfe6ff':'#8fb7d6');
+    ctx.fillRect(x,y,s,s);
+  }
+  ctx.restore();
+}
+
+// -------- Bind UI buttons --------
+btnControlKey.addEventListener('click', ()=>{
+  chosenControl = 'keys';
+  btnControlKey.classList.remove('ghost'); btnControlKey.classList.add('selected');
+  btnControlTouch.classList.add('ghost'); btnControlTouch.classList.remove('selected');
+});
+btnControlTouch.addEventListener('click', ()=>{
+  chosenControl = 'touch';
+  btnControlTouch.classList.remove('ghost'); btnControlTouch.classList.add('selected');
+  btnControlKey.classList.add('ghost'); btnControlKey.classList.remove('selected');
 });
 
-// Manter aba ativa após mudanças
-document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-    tab.addEventListener('shown.bs.tab', function(e) {
-        const target = e.target.getAttribute('data-bs-target');
-        window.location.hash = target;
-    });
+btnStart.addEventListener('click', ()=>{
+  startGame();
 });
+
+menuBack.addEventListener('click', ()=>{
+  overlayMenu.style.display='none';
+  setupPanel.style.display='block';
+  document.getElementById('game-wrapper').style.display='none';
+});
+
+menuPlay.addEventListener('click', ()=>{
+  overlayMenu.style.display='none';
+  // show touch UI if needed
+  if(chosenControl === 'touch'){
+    touchLeft.style.display='flex';
+    touchRight.style.display='flex';
+  } else {
+    touchLeft.style.display='none';
+    touchRight.style.display='none';
+  }
+  GAME.player = createPlayer();
+  GAME.player.y = GAME.height/2;
+  GAME.running = true;
+  GAME.lastTime = now();
+  requestAnimationFrame(gameLoop);
+});
+
+btnFull.addEventListener('click', ()=>{
+  const el = document.getElementById('game-wrapper');
+  if(!document.fullscreenElement){
+    el.requestFullscreen?.();
+  } else {
+    document.exitFullscreen?.();
+  }
+});
+
+// show scores
+btnShowScores.addEventListener('click', ()=>{
+  updateScoresList();
+  scoresPanel.style.display='block';
+});
+closeScores.addEventListener('click', ()=> scoresPanel.style.display='none');
+
+btnClearScores.addEventListener('click', ()=>{
+  if(confirm('Limpar todos os placares salvos?')){ clearScores(); updateScoresList(); alert('Placar limpo'); }
+});
+
+// gameover menu
+goRestart.addEventListener('click', ()=>{
+  overlayGameover.style.display='none';
+  // restart with same nick & control
+  resetGame();
+  GAME.player = createPlayer();
+  if(GAME.control === 'touch'){
+    touchLeft.style.display='flex';
+    touchRight.style.display='flex';
+  } else {
+    touchLeft.style.display='none';
+    touchRight.style.display='none';
+  }
+  GAME.running = true;
+  GAME.lastTime = now();
+  requestAnimationFrame(gameLoop);
+});
+goMenu.addEventListener('click', ()=>{
+  overlayGameover.style.display='none';
+  document.getElementById('game-wrapper').style.display='none';
+  setupPanel.style.display='block';
+  scoresPanel.style.display='none';
+});
+
+// download buttons
+downloadJsonBtn.addEventListener('click', ()=> downloadJSON('scores-space-impact.json'));
+downloadJsonBtn2.addEventListener('click', ()=> downloadJSON('scores-space-impact.json'));
+
+// update scores list rendering
+function updateScoresList(){
+  const arr = loadScores().slice().reverse();
+  if(arr.length === 0){
+    scoresList.innerHTML = '<div class="score-row">Nenhum placar salvo ainda.</div>';
+    return;
+  }
+  scoresList.innerHTML = '';
+  arr.forEach((s, idx)=>{
+    const row = document.createElement('div');
+    row.className = 'score-row';
+    const left = document.createElement('div');
+    left.textContent = `${s.nick} — Fase ${s.level}`;
+    const right = document.createElement('div');
+    right.textContent = `${s.score} pts • ${new Date(s.date).toLocaleString()}`;
+    row.appendChild(left); row.appendChild(right);
+    scoresList.appendChild(row);
+  });
+}
+
+// adapt canvas resolution to display size for crispness
+function resizeCanvas(){
+  const wrapper = document.getElementById('game-wrapper');
+  const rect = wrapper.getBoundingClientRect();
+  // maintain aspect for vertical orientation: keep canvas width = rect.width, height fixed controlled by css
+  const cssW = rect.width;
+  const cssH = rect.height;
+  // set internal resolution higher for retina
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = Math.floor(cssW * ratio);
+  canvas.height = Math.floor(cssH * ratio);
+  canvas.style.width = cssW + 'px';
+  canvas.style.height = cssH + 'px';
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  GAME.width = canvas.width/ratio;
+  GAME.height = canvas.height/ratio;
+  if(GAME.player) GAME.player.x = 60;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// small initial setup
+updateScoresList();
+updateHUD();
+
+// ensure if user chooses touch control show UI when playing
+// Also show on-screen helper on menu overlay
+document.getElementById('menu-sub').textContent = `Nome: ${inputNick.value||'Player'} | Controle: ${chosenControl}`;
+
+inputNick.addEventListener('input', ()=>{
+  document.getElementById('menu-sub').textContent = `Nome: ${inputNick.value||'Player'} | Controle: ${chosenControl}`;
+});
+
+// show/hide touch UI when selecting control before playing
+btnControlKey.addEventListener('click', ()=> { touchLeft.style.display='none'; touchRight.style.display='none'; });
+btnControlTouch.addEventListener('click', ()=> { touchLeft.style.display='flex'; touchRight.style.display='flex'; });
+
+// Lightweight accessibility: allow clicking shot area on canvas for mouse users
+canvas.addEventListener('mousedown', (e)=>{
+  if(GAME.control==='touch'){
+    keyState.shoot = true;
+    setTimeout(()=> keyState.shoot=false, 120);
+  }
+});
+
+// prevent scrolling on touch swipes while playing
+document.body.addEventListener('touchmove', function(e){
+  if(GAME.running && GAME.control==='touch') e.preventDefault();
+}, {passive:false});
+
 </script>
 </body>
 </html>
