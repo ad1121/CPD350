@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Racha Cuca</title>
+    <title>Jogos de Raciocínio</title>
     <style>
         * {
             margin: 0;
@@ -28,7 +28,7 @@
         border-radius: 20px;
         padding: 30px;
         box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        max-width: 500px;
+        max-width: 600px;
         width: 100%;
     }
 
@@ -39,30 +39,85 @@
         font-size: 2em;
     }
 
-    .menu {
+    /* Menu Principal */
+    .main-menu {
         display: flex;
         flex-direction: column;
         gap: 15px;
     }
 
-    .difficulty-group {
+    .game-card {
+        padding: 25px;
+        border: 3px solid #667eea;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: white;
+    }
+
+    .game-card:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .game-card h2 {
+        margin-bottom: 10px;
+        font-size: 24px;
+    }
+
+    .game-card p {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .game-card:hover h2,
+    .game-card:hover p {
+        color: white;
+    }
+
+    /* Menu de Configuração */
+    .game-menu {
+        display: none;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .back-btn {
+        padding: 10px 20px;
+        background: #ddd;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s;
+        align-self: flex-start;
+    }
+
+    .back-btn:hover {
+        background: #ccc;
+    }
+
+    .difficulty-group, .mode-group {
         display: flex;
         flex-direction: column;
         gap: 10px;
     }
 
-    .difficulty-group label {
+    .difficulty-group label, .mode-group label {
         font-weight: 600;
         color: #555;
     }
 
-    .difficulty-buttons {
+    .difficulty-buttons, .mode-buttons {
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
     }
 
-    .difficulty-btn {
+    .difficulty-btn, .mode-btn {
         flex: 1;
         min-width: 80px;
         padding: 12px;
@@ -76,13 +131,13 @@
         transition: all 0.3s;
     }
 
-    .difficulty-btn:hover {
+    .difficulty-btn:hover, .mode-btn:hover {
         background: #667eea;
         color: white;
         transform: translateY(-2px);
     }
 
-    .difficulty-btn.active {
+    .difficulty-btn.active, .mode-btn.active {
         background: #667eea;
         color: white;
     }
@@ -122,6 +177,7 @@
         transform: scale(1.05);
     }
 
+    /* Tela de Jogo */
     .game-screen {
         display: none;
     }
@@ -151,6 +207,7 @@
         color: #333;
     }
 
+    /* Board Racha Cuca */
     .board {
         display: grid;
         gap: 8px;
@@ -188,6 +245,80 @@
 
     .tile.empty:hover {
         transform: none;
+    }
+
+    /* Board Dama */
+    .checkers-board {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 0;
+        margin: 0 auto 20px;
+        border: 4px solid #333;
+        border-radius: 10px;
+        overflow: hidden;
+        max-width: 500px;
+        aspect-ratio: 1;
+    }
+
+    .checkers-cell {
+        aspect-ratio: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .checkers-cell.light {
+        background: #f0d9b5;
+    }
+
+    .checkers-cell.dark {
+        background: #b58863;
+    }
+
+    .checkers-cell.selected {
+        background: #7fc97f;
+    }
+
+    .checkers-cell.possible-move {
+        background: #a8d5ba;
+    }
+
+    .checkers-cell.ai-thinking {
+        background: #ffd700;
+    }
+
+    .piece {
+        width: 70%;
+        height: 70%;
+        border-radius: 50%;
+        border: 3px solid #333;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+    }
+
+    .piece:hover {
+        transform: scale(1.1);
+    }
+
+    .piece.red {
+        background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
+    }
+
+    .piece.black {
+        background: radial-gradient(circle at 30% 30%, #495057, #212529);
+    }
+
+    .piece.king::after {
+        content: '♔';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        color: gold;
     }
 
     .game-buttons {
@@ -313,15 +444,56 @@
     .overlay.show {
         display: block;
     }
+
+    .current-player {
+        text-align: center;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .ai-thinking {
+        text-align: center;
+        padding: 10px;
+        background: #fff3cd;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        font-weight: 600;
+        color: #856404;
+        display: none;
+    }
+
+    .ai-thinking.show {
+        display: block;
+    }
 </style>
+
 
 </head>
 <body>
     <div class="container">
-        <h1>🎮 RACHA CUCA</h1>
+        <h1>🎮 JOGOS DE RACIOCÍNIO</h1>
 
 
-    <div class="menu" id="menu">
+    <!-- Menu Principal -->
+    <div class="main-menu" id="mainMenu">
+        <div class="game-card" onclick="selectGame('rachacuca')">
+            <h2>🧩 Racha Cuca</h2>
+            <p>Deslize as peças para ordenar os números de 1 até o final</p>
+        </div>
+        <div class="game-card" onclick="selectGame('checkers')">
+            <h2>⚫⚪ Dama</h2>
+            <p>Jogo clássico de dama - jogue contra o computador ou com amigos</p>
+        </div>
+    </div>
+
+    <!-- Menu Racha Cuca -->
+    <div class="game-menu" id="rachacucaMenu">
+        <button class="back-btn" onclick="backToMain()">← Voltar</button>
+        
         <div class="difficulty-group">
             <label>Escolha a Dificuldade:</label>
             <div class="difficulty-buttons">
@@ -336,7 +508,7 @@
             <input type="color" class="color-input" id="colorPicker" value="#667eea">
         </div>
 
-        <button class="start-btn" id="startBtn">▶️ JOGAR</button>
+        <button class="start-btn" onclick="startRachaCuca()">▶️ JOGAR</button>
 
         <div class="records" id="menuRecords">
             <h3>🏆 Últimos Tempos</h3>
@@ -344,7 +516,44 @@
         </div>
     </div>
 
-    <div class="game-screen" id="gameScreen">
+    <!-- Menu Dama -->
+    <div class="game-menu" id="checkersMenu">
+        <button class="back-btn" onclick="backToMain()">← Voltar</button>
+        
+        <div class="mode-group">
+            <label>Modo de Jogo:</label>
+            <div class="mode-buttons">
+                <button class="mode-btn active" data-mode="ai">🤖 Contra Computador</button>
+                <button class="mode-btn" data-mode="pvp">👥 Dois Jogadores</button>
+            </div>
+        </div>
+
+        <div class="difficulty-group" id="aiDifficultyGroup">
+            <label>Dificuldade do Computador:</label>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn ai-diff active" data-difficulty="easy">Fácil</button>
+                <button class="difficulty-btn ai-diff" data-difficulty="medium">Médio</button>
+                <button class="difficulty-btn ai-diff" data-difficulty="hard">Difícil</button>
+            </div>
+        </div>
+
+        <div class="color-picker-group">
+            <label>Sua Cor (Jogador 1):</label>
+            <input type="color" class="color-input" id="player1Color" value="#ff6b6b">
+        </div>
+
+        <div class="color-picker-group">
+            <label id="player2Label">Cor do Computador:</label>
+            <input type="color" class="color-input" id="player2Color" value="#495057">
+        </div>
+
+        <button class="start-btn" onclick="startCheckers()">▶️ JOGAR</button>
+    </div>
+
+    <!-- Tela de Jogo Racha Cuca -->
+    <div class="game-screen" id="rachacucaScreen">
+        <button class="back-btn" onclick="backToMain()">← Menu Principal</button>
+        
         <div class="game-info">
             <div class="info-item">
                 <div class="info-label">Movimentos</div>
@@ -359,13 +568,26 @@
         <div class="board" id="board"></div>
 
         <div class="game-buttons">
-            <button class="game-btn reset-btn" id="resetBtn">🔄 Reiniciar</button>
-            <button class="game-btn menu-btn" id="menuBtn">🏠 Menu</button>
+            <button class="game-btn reset-btn" onclick="resetRachaCuca()">🔄 Reiniciar</button>
         </div>
 
         <div class="records">
             <h3>🏆 Últimos Tempos</h3>
             <div class="record-list" id="recordList"></div>
+        </div>
+    </div>
+
+    <!-- Tela de Jogo Dama -->
+    <div class="game-screen" id="checkersScreen">
+        <button class="back-btn" onclick="backToMain()">← Menu Principal</button>
+        
+        <div class="ai-thinking" id="aiThinking">🤖 Computador pensando...</div>
+        <div class="current-player" id="currentPlayer">Sua vez!</div>
+
+        <div class="checkers-board" id="checkersBoard"></div>
+
+        <div class="game-buttons">
+            <button class="game-btn reset-btn" onclick="resetCheckers()">🔄 Reiniciar</button>
         </div>
     </div>
 </div>
@@ -378,6 +600,10 @@
 </div>
 
 <script>
+    // Variáveis Globais
+    let currentGame = null;
+    
+    // Racha Cuca
     let size = 3;
     let tiles = [];
     let emptyIndex = 0;
@@ -387,23 +613,48 @@
     let selectedColor = '#667eea';
     let difficulty = 'easy';
 
-    const menu = document.getElementById('menu');
-    const gameScreen = document.getElementById('gameScreen');
-    const board = document.getElementById('board');
-    const movesEl = document.getElementById('moves');
-    const timerEl = document.getElementById('timer');
-    const startBtn = document.getElementById('startBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const menuBtn = document.getElementById('menuBtn');
-    const colorPicker = document.getElementById('colorPicker');
-    const difficultyBtns = document.querySelectorAll('.difficulty-btn');
-    const winMessage = document.getElementById('winMessage');
-    const winText = document.getElementById('winText');
-    const playAgainBtn = document.getElementById('playAgainBtn');
-    const overlay = document.getElementById('overlay');
-    const recordList = document.getElementById('recordList');
-    const menuRecordList = document.getElementById('menuRecordList');
+    // Dama
+    let checkersBoard = [];
+    let selectedPiece = null;
+    let currentPlayer = 1;
+    let player1Color = '#ff6b6b';
+    let player2Color = '#495057';
+    let gameMode = 'ai';
+    let aiDifficulty = 'easy';
+    let isAiThinking = false;
 
+    // Elementos DOM
+    const mainMenu = document.getElementById('mainMenu');
+    const rachacucaMenu = document.getElementById('rachacucaMenu');
+    const checkersMenu = document.getElementById('checkersMenu');
+    const rachacucaScreen = document.getElementById('rachacucaScreen');
+    const checkersScreen = document.getElementById('checkersScreen');
+    const winMessage = document.getElementById('winMessage');
+    const overlay = document.getElementById('overlay');
+
+    // ===== NAVEGAÇÃO =====
+    function selectGame(game) {
+        mainMenu.style.display = 'none';
+        if (game === 'rachacuca') {
+            rachacucaMenu.style.display = 'flex';
+            displayRecords(document.getElementById('menuRecordList'));
+        } else if (game === 'checkers') {
+            checkersMenu.style.display = 'flex';
+        }
+    }
+
+    function backToMain() {
+        mainMenu.style.display = 'flex';
+        rachacucaMenu.style.display = 'none';
+        checkersMenu.style.display = 'none';
+        rachacucaScreen.style.display = 'none';
+        checkersScreen.style.display = 'none';
+        stopTimer();
+        isAiThinking = false;
+    }
+
+    // ===== RACHA CUCA =====
+    const difficultyBtns = document.querySelectorAll('.difficulty-btn:not(.ai-diff)');
     difficultyBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             difficultyBtns.forEach(b => b.classList.remove('active'));
@@ -413,38 +664,23 @@
         });
     });
 
-    colorPicker.addEventListener('input', (e) => {
+    document.getElementById('colorPicker').addEventListener('input', (e) => {
         selectedColor = e.target.value;
     });
 
-    startBtn.addEventListener('click', startGame);
-    resetBtn.addEventListener('click', resetGame);
-    menuBtn.addEventListener('click', showMenu);
-    playAgainBtn.addEventListener('click', () => {
-        winMessage.classList.remove('show');
-        overlay.classList.remove('show');
-        resetGame();
-    });
-
-    function startGame() {
-        menu.style.display = 'none';
-        gameScreen.style.display = 'block';
-        initGame();
+    function startRachaCuca() {
+        rachacucaMenu.style.display = 'none';
+        rachacucaScreen.style.display = 'block';
+        initRachaCuca();
     }
 
-    function showMenu() {
-        gameScreen.style.display = 'none';
-        menu.style.display = 'flex';
-        stopTimer();
-        displayRecords(menuRecordList);
-    }
-
-    function initGame() {
+    function initRachaCuca() {
         moves = 0;
         seconds = 0;
-        movesEl.textContent = '0';
-        timerEl.textContent = '00:00';
+        document.getElementById('moves').textContent = '0';
+        document.getElementById('timer').textContent = '00:00';
         
+        const board = document.getElementById('board');
         board.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
         
         const totalTiles = size * size;
@@ -455,7 +691,7 @@
         shuffleTiles();
         renderBoard();
         startTimer();
-        displayRecords(recordList);
+        displayRecords(document.getElementById('recordList'));
     }
 
     function shuffleTiles() {
@@ -486,6 +722,7 @@
     }
 
     function renderBoard() {
+        const board = document.getElementById('board');
         board.innerHTML = '';
         const fontSize = size === 3 ? '24px' : size === 4 ? '20px' : '16px';
         
@@ -512,12 +749,12 @@
         if (neighbors.includes(index)) {
             swapTiles(index, emptyIndex);
             moves++;
-            movesEl.textContent = moves;
+            document.getElementById('moves').textContent = moves;
             renderBoard();
             
             if (checkWin()) {
                 stopTimer();
-                showWinMessage();
+                showWinMessageRachaCuca();
             }
         }
     }
@@ -535,7 +772,8 @@
             seconds++;
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
-            timerEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            document.getElementById('timer').textContent = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }, 1000);
     }
 
@@ -546,22 +784,23 @@
         }
     }
 
-    function resetGame() {
+    function resetRachaCuca() {
         stopTimer();
-        initGame();
+        initRachaCuca();
     }
 
-    function showWinMessage() {
+    function showWinMessageRachaCuca() {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         
-        winText.textContent = `Você completou em ${timeStr} com ${moves} movimentos!`;
+        document.getElementById('winText').textContent = 
+            `Você completou em ${timeStr} com ${moves} movimentos!`;
         winMessage.classList.add('show');
         overlay.classList.add('show');
         
         saveRecord(timeStr, moves);
-        displayRecords(recordList);
+        displayRecords(document.getElementById('recordList'));
     }
 
     function saveRecord(time, moves) {
@@ -598,9 +837,179 @@
         `).join('');
     }
 
-    displayRecords(menuRecordList);
-</script>
+    document.getElementById('playAgainBtn').addEventListener('click', () => {
+        winMessage.classList.remove('show');
+        overlay.classList.remove('show');
+        if (currentGame === 'rachacuca') {
+            resetRachaCuca();
+        } else {
+            resetCheckers();
+        }
+    });
 
+    // ===== DAMA =====
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    modeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            modeBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            gameMode = btn.dataset.mode;
+            
+            const aiDiffGroup = document.getElementById('aiDifficultyGroup');
+            const player2Label = document.getElementById('player2Label');
+            
+            if (gameMode === 'ai') {
+                aiDiffGroup.style.display = 'flex';
+                player2Label.textContent = 'Cor do Computador:';
+            } else {
+                aiDiffGroup.style.display = 'none';
+                player2Label.textContent = 'Cor do Jogador 2:';
+            }
+        });
+    });
 
+    const aiDiffBtns = document.querySelectorAll('.ai-diff');
+    aiDiffBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            aiDiffBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            aiDifficulty = btn.dataset.difficulty;
+        });
+    });
+
+    document.getElementById('player1Color').addEventListener('input', (e) => {
+        player1Color = e.target.value;
+    });
+
+    document.getElementById('player2Color').addEventListener('input', (e) => {
+        player2Color = e.target.value;
+    });
+
+    function startCheckers() {
+        currentGame = 'checkers';
+        checkersMenu.style.display = 'none';
+        checkersScreen.style.display = 'block';
+        initCheckers();
+    }
+
+    function initCheckers() {
+        currentPlayer = 1;
+        selectedPiece = null;
+        isAiThinking = false;
+        checkersBoard = Array(8).fill(null).map(() => Array(8).fill(null));
+        
+        // Inicializar peças
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 8; col++) {
+                if ((row + col) % 2 === 1) {
+                    checkersBoard[row][col] = { player: 2, king: false };
+                }
+            }
+        }
+        
+        for (let row = 5; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                if ((row + col) % 2 === 1) {
+                    checkersBoard[row][col] = { player: 1, king: false };
+                }
+            }
+        }
+        
+        renderCheckersBoard();
+        updateCurrentPlayer();
+    }
+
+    function renderCheckersBoard() {
+        const board = document.getElementById('checkersBoard');
+        board.innerHTML = '';
+        
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                const cell = document.createElement('div');
+                cell.className = 'checkers-cell';
+                cell.className += (row + col) % 2 === 0 ? ' light' : ' dark';
+                cell.dataset.row = row;
+                cell.dataset.col = col;
+                
+                const piece = checkersBoard[row][col];
+                if (piece) {
+                    const pieceEl = document.createElement('div');
+                    pieceEl.className = 'piece';
+                    pieceEl.className += piece.player === 1 ? ' red' : ' black';
+                    if (piece.king) pieceEl.classList.add('king');
+function getAllPossibleMoves(player) {
+            const moves = [];
+            
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const piece = checkersBoard[row][col];
+                    if (piece && piece.player === player) {
+                        const directions = piece.king ? 
+                            [[-1, -1], [-1, 1], [1, -1], [1, 1]] : 
+                            player === 1 ? [[-1, -1], [-1, 1]] : [[1, -1], [1, 1]];
+                        
+                        for (const [dr, dc] of directions) {
+                            const newRow = row + dr;
+                            const newCol = col + dc;
+                            if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+                                if (isValidMove(row, col, newRow, newCol)) {
+                                    moves.push({ fromRow: row, fromCol: col, toRow: newRow, toCol: newCol });
+                                }
+                            }
+                            
+                            const jumpRow = row + dr * 2;
+                            const jumpCol = col + dc * 2;
+                            if (jumpRow >= 0 && jumpRow < 8 && jumpCol >= 0 && jumpCol < 8) {
+                                if (isValidMove(row, col, jumpRow, jumpCol)) {
+                                    moves.push({ fromRow: row, fromCol: col, toRow: jumpRow, toCol: jumpCol });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return moves;
+        }
+
+        function getBestMove(moves) {
+            let bestScore = -Infinity;
+            let bestMove = moves[0];
+            
+            for (const move of moves) {
+                const score = evaluateMove(move);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = move;
+                }
+            }
+            
+            return bestMove;
+        }
+
+        function evaluateMove(move) {
+            let score = 0;
+            
+            if (Math.abs(move.toRow - move.fromRow) === 2) {
+                score += 50;
+            }
+            
+            score += (7 - move.toRow) * 5;
+            
+            const centerDistance = Math.abs(3.5 - move.toCol);
+            score -= centerDistance * 2;
+            
+            if (move.toRow === 7) {
+                score += 100;
+            }
+            
+            const piece = checkersBoard[move.fromRow][move.fromCol];
+            if (piece && piece.king) {
+                score += 10;
+            }
+            
+            return score;
+        }
+    </script>
 </body>
 </html>
