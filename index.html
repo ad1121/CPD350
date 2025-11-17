@@ -2,216 +2,216 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Controle Financeiro - Completo</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Controle Financeiro</title>
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-    :root{
-        --primaria: #FF3B5C;   /* rosa/vermelho vivo */
-        --secundaria: #FFB400; /* amarelo destaque */
-        --sucesso: #2ECC71;    /* verde */
-        --fundo: #F6F7FB;
-        --texto: #222;
-        --card-bg: #ffffff;
-    }
+:root{
+    --primaria: #FF3B5C;   /* rosa/vermelho vivo */
+    --secundaria: #FFB400; /* amarelo destaque */
+    --sucesso: #2ECC71;    /* verde */
+    --fundo: #F6F7FB;
+    --texto: #222;
+    --card-bg: #ffffff;
+}
 
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-        background:var(--fundo);
-        color:var(--texto);
-        padding:18px;
-        -webkit-font-smoothing:antialiased;
-    }
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:var(--fundo);
+    color:var(--texto);
+    padding:18px;
+    -webkit-font-smoothing:antialiased;
+}
 
-    /* Header */
-    .header{
-        background: linear-gradient(90deg,var(--primaria), #ff6b84);
-        color:white;
-        padding:18px;
-        border-radius:12px;
-        text-align:center;
-        font-weight:700;
-        font-size:20px;
-        box-shadow:0 6px 18px rgba(0,0,0,0.08);
-        margin-bottom:18px;
-        animation:fadeInDown .45s ease;
-    }
+/* Header */
+.header{
+    background: linear-gradient(90deg,var(--primaria), #ff6b84);
+    color:white;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:700;
+    font-size:20px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.08);
+    margin-bottom:18px;
+    animation:fadeInDown .45s ease;
+}
 
-    /* Main layout */
-    .main{
-        display:grid;
-        grid-template-columns: 1fr 380px;
-        gap:18px;
-    }
+/* Main layout */
+.main{
+    display:grid;
+    grid-template-columns: 1fr 380px;
+    gap:18px;
+}
 
-    @media(max-width:920px){
-        .main{ grid-template-columns: 1fr; }
-    }
+@media(max-width:920px){
+    .main{ grid-template-columns: 1fr; }
+}
 
-    /* Card */
-    .card{
-        background:var(--card-bg);
-        border-radius:12px;
-        padding:14px;
-        box-shadow:0 6px 18px rgba(8,8,8,0.06);
-        animation:fadeInUp .45s ease;
-    }
+/* Card */
+.card{
+    background:var(--card-bg);
+    border-radius:12px;
+    padding:14px;
+    box-shadow:0 6px 18px rgba(8,8,8,0.06);
+    animation:fadeInUp .45s ease;
+}
 
-    .saldo{
-        text-align:center;
-        padding:18px;
-        border-radius:10px;
-        margin-bottom:12px;
-        background:linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
-    }
-    .saldo small{display:block;color:#666;margin-bottom:6px}
-    .saldo .valor{
-        font-size:34px;
-        font-weight:800;
-    }
-    .saldo .valor.neg{ color: #e74c3c; }
+.saldo{
+    text-align:center;
+    padding:18px;
+    border-radius:10px;
+    margin-bottom:12px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
+}
+.saldo small{display:block;color:#666;margin-bottom:6px}
+.saldo .valor{
+    font-size:34px;
+    font-weight:800;
+}
+.saldo .valor.neg{ color: #e74c3c; }
 
-    /* Formulario - inputs lado a lado */
-    .form-row{
-        display:flex;
-        gap:10px;
-        margin-bottom:12px;
-        flex-wrap:wrap;
-    }
-    .form-row input[type="text"]{
-        flex:1;
-        padding:10px 12px;
-        border-radius:8px;
-        border:1px solid rgba(0,0,0,0.08);
-        font-size:14px;
-        background: #fff;
-    }
-    .form-row input.valor-input{
-        width:150px;
-        text-align:right;
-    }
-    .form-row button{
-        padding:10px 14px;
-        border-radius:8px;
-        border:none;
-        cursor:pointer;
-        font-weight:700;
-    }
-    .btn-add-receita{ background: linear-gradient(90deg,var(--sucesso), #22b66a); color:white }
-    .btn-add-despesa{ background: linear-gradient(90deg,var(--primaria), #ff6b84); color:white }
+/* Formulario - inputs lado a lado */
+.form-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:12px;
+    flex-wrap:wrap;
+}
+.form-row input[type="text"]{
+    flex:1;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid rgba(0,0,0,0.08);
+    font-size:14px;
+    background: #fff;
+}
+.form-row input.valor-input{
+    width:150px;
+    text-align:right;
+}
+.form-row button{
+    padding:10px 14px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    font-weight:700;
+}
+.btn-add-receita{ background: linear-gradient(90deg,var(--sucesso), #22b66a); color:white }
+.btn-add-despesa{ background: linear-gradient(90deg,var(--primaria), #ff6b84); color:white }
 
-    /* Listas */
-    .lista{
-        margin-top:8px;
-        display:flex;
-        flex-direction:column;
-        gap:10px;
-    }
-    .item{
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        background: #fff;
-        padding:12px;
-        border-radius:10px;
-        box-shadow:0 4px 10px rgba(0,0,0,0.04);
-        transition: transform .12s ease, box-shadow .12s ease;
-    }
-    .item:hover{ transform: translateY(-4px); box-shadow:0 10px 20px rgba(0,0,0,0.06); }
+/* Listas */
+.lista{
+    margin-top:8px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+.item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background: #fff;
+    padding:12px;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.04);
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+.item:hover{ transform: translateY(-4px); box-shadow:0 10px 20px rgba(0,0,0,0.06); }
 
-    .item .meta{
-        display:flex;
-        flex-direction:column;
-        gap:4px;
-    }
-    .item .descricao{
-        font-weight:700;
-        color:#222;
-    }
-    .item .sub{
-        font-size:13px;
-        color:#666;
-    }
-    .item .valor{
-        font-weight:800;
-        min-width:110px;
-        text-align:right;
-        color:var(--primaria);
-    }
-    .item.paga .valor{ color: #999 }
-    .item.paga{ opacity:.6; text-decoration: line-through; }
+.item .meta{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+.item .descricao{
+    font-weight:700;
+    color:#222;
+}
+.item .sub{
+    font-size:13px;
+    color:#666;
+}
+.item .valor{
+    font-weight:800;
+    min-width:110px;
+    text-align:right;
+    color:var(--primaria);
+}
+.item.paga .valor{ color: #999 }
+.item.paga{ opacity:.6; text-decoration: line-through; }
 
-    .item .acoes{
-        display:flex;
-        gap:8px;
-        margin-left:12px;
-    }
-    .btn-pagar{
-        background:var(--primaria);
-        color:white;
-        border:none;
-        padding:8px 10px;
-        border-radius:8px;
-        cursor:pointer;
-        font-weight:700;
-    }
-    .btn-desfazer{
-        background:var(--secundaria);
-        color:#222;
-        border:none;
-        padding:8px 10px;
-        border-radius:8px;
-        cursor:pointer;
-        font-weight:700;
-    }
-    .btn-remover{
-        background:transparent;
-        border:1px solid rgba(0,0,0,0.06);
-        color:#777;
-        padding:8px 10px;
-        border-radius:8px;
-        cursor:pointer;
-        font-weight:700;
-    }
+.item .acoes{
+    display:flex;
+    gap:8px;
+    margin-left:12px;
+}
+.btn-pagar{
+    background:var(--primaria);
+    color:white;
+    border:none;
+    padding:8px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700;
+}
+.btn-desfazer{
+    background:var(--secundaria);
+    color:#222;
+    border:none;
+    padding:8px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700;
+}
+.btn-remover{
+    background:transparent;
+    border:1px solid rgba(0,0,0,0.06);
+    color:#777;
+    padding:8px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700;
+}
 
-    /* Right column (gráfico + resumo) */
-    .aside {
-        display:flex;
-        flex-direction:column;
-        gap:12px;
-    }
+/* Right column (gráfico + resumo) */
+.aside {
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
 
-    .resumo{
-        display:flex;
-        justify-content:space-between;
-        gap:10px;
-        padding:12px;
-        border-radius:10px;
-        background:#fff;
-        align-items:center;
-    }
-    .resumo .box{ text-align:center; }
-    .resumo .box small{ display:block; color:#666; }
-    .resumo .box .num{ font-weight:800; font-size:18px; margin-top:6px; }
+.resumo{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:12px;
+    border-radius:10px;
+    background:#fff;
+    align-items:center;
+}
+.resumo .box{ text-align:center; }
+.resumo .box small{ display:block; color:#666; }
+.resumo .box .num{ font-weight:800; font-size:18px; margin-top:6px; }
 
-    /* gráfico */
-    .grafico-card{ padding:14px; border-radius:10px; background:#fff; }
-    canvas{ width:100% !important; height:260px !important; }
+/* gráfico */
+.grafico-card{ padding:14px; border-radius:10px; background:#fff; }
+canvas{ width:100% !important; height:260px !important; }
 
-    .rodape{
-        margin-top:12px;
-        font-size:13px;
-        color:#666;
-        text-align:center;
-    }
+.rodape{
+    margin-top:12px;
+    font-size:13px;
+    color:#666;
+    text-align:center;
+}
 
-    /* animações */
-    @keyframes fadeInUp { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
-    @keyframes fadeInDown { from{opacity:0; transform:translateY(-8px)} to{opacity:1; transform:none} }
+/* animações */
+@keyframes fadeInUp { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
+@keyframes fadeInDown { from{opacity:0; transform:translateY(-8px)} to{opacity:1; transform:none} }
 </style>
 </head>
 <body>
@@ -347,13 +347,12 @@ const elTotalDespesasPagas = document.getElementById('totalDespesasPagas');
    ----------------------- */
 [elRecVal, elDesVal].forEach(inp=>{
     inp.addEventListener('input', e=>{
-        const pos = e.target.selectionStart;
+        const start = e.target.selectionStart;
         e.target.value = formatarInputValor(e.target.value);
-        // tenta manter o cursor no final (simples)
+        // mover cursor para o final — simples e robusto
         e.target.selectionStart = e.target.selectionEnd = e.target.value.length;
     });
     inp.addEventListener('keypress', e=>{
-        // permite só números (Enter tratado separadamente)
         if(e.key === 'Enter'){
             if(inp.id === 'rec-valor'){ adicionarReceita(); } else { adicionarDespesa(); }
             e.preventDefault();
@@ -394,7 +393,6 @@ function renderizarReceitas(){
         <div class="item" id="rec-${r.id}">
             <div class="meta">
                 <div class="descricao">${escapeHtml(r.descricao)}</div>
-                <div class="sub">${new Date(r.id).toLocaleString()}</div>
             </div>
             <div style="display:flex;align-items:center;gap:10px">
                 <div class="valor">${formatarMoeda(r.valor)}</div>
@@ -415,7 +413,6 @@ function renderizarDespesas(){
         <div class="item ${d.paga ? 'paga' : ''}" id="des-${d.id}">
             <div class="meta">
                 <div class="descricao">${escapeHtml(d.descricao)}</div>
-                <div class="sub">${new Date(d.id).toLocaleString()}</div>
             </div>
 
             <div style="display:flex;align-items:center;gap:10px">
