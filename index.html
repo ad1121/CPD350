@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Racha Cuca</title>
+    <title>Minhas Finanças</title>
     <style>
         * {
             margin: 0;
@@ -14,592 +14,303 @@
 
 ```
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        background-color: white;
+        color: black;
+        font-family: Arial, sans-serif;
         padding: 20px;
+        max-width: 800px;
+        margin: 0 auto;
     }
 
-    .container {
-        background: white;
-        border-radius: 20px;
+    .saldo-container {
+        text-align: center;
         padding: 30px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        max-width: 500px;
-        width: 100%;
-    }
-
-    h1 {
-        text-align: center;
-        color: #333;
-        margin-bottom: 20px;
-        font-size: 2em;
-    }
-
-    .menu {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .difficulty-group {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .difficulty-group label {
-        font-weight: 600;
-        color: #555;
-    }
-
-    .difficulty-buttons {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .difficulty-btn {
-        flex: 1;
-        min-width: 80px;
-        padding: 12px;
-        border: 2px solid #667eea;
-        background: white;
-        color: #667eea;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: 600;
-        transition: all 0.3s;
-    }
-
-    .difficulty-btn:hover {
-        background: #667eea;
-        color: white;
-        transform: translateY(-2px);
-    }
-
-    .difficulty-btn.active {
-        background: #667eea;
-        color: white;
-    }
-
-    .color-picker-group {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .color-picker-group label {
-        font-weight: 600;
-        color: #555;
-    }
-
-    .color-input {
-        width: 100%;
-        height: 50px;
-        border: 2px solid #ddd;
-        border-radius: 10px;
-        cursor: pointer;
-    }
-
-    .start-btn {
-        padding: 15px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 18px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.3s;
-    }
-
-    .start-btn:hover {
-        transform: scale(1.05);
-    }
-
-    .game-screen {
-        display: none;
-    }
-
-    .game-info {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        padding: 15px;
-        background: #f8f9fa;
-        border-radius: 10px;
-    }
-
-    .info-item {
-        text-align: center;
-    }
-
-    .info-label {
-        font-size: 12px;
-        color: #666;
-        margin-bottom: 5px;
-    }
-
-    .info-value {
-        font-size: 20px;
-        font-weight: 700;
-        color: #333;
-    }
-
-    .board {
-        display: grid;
-        gap: 8px;
-        margin: 0 auto 20px;
-        background: #e0e0e0;
-        padding: 15px;
-        border-radius: 15px;
-        box-shadow: inset 0 4px 8px rgba(0,0,0,0.1);
-    }
-
-    .tile {
-        aspect-ratio: 1;
-        background: white;
-        border-radius: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 24px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        user-select: none;
-    }
-
-    .tile:hover {
-        transform: scale(0.95);
-    }
-
-    .tile.empty {
-        background: transparent;
-        box-shadow: none;
-        cursor: default;
-    }
-
-    .tile.empty:hover {
-        transform: none;
-    }
-
-    .game-buttons {
-        display: flex;
-        gap: 10px;
-    }
-
-    .game-btn {
-        flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .reset-btn {
-        background: #ff6b6b;
-        color: white;
-    }
-
-    .reset-btn:hover {
-        background: #ff5252;
-    }
-
-    .menu-btn {
-        background: #667eea;
-        color: white;
-    }
-
-    .menu-btn:hover {
-        background: #5568d3;
-    }
-
-    .records {
-        margin-top: 20px;
-        padding: 15px;
-        background: #f8f9fa;
-        border-radius: 10px;
-    }
-
-    .records h3 {
-        margin-bottom: 10px;
-        color: #333;
-        font-size: 16px;
-    }
-
-    .record-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .record-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 12px;
-        background: white;
+        margin-bottom: 30px;
+        border: 2px solid black;
         border-radius: 8px;
+    }
+
+    .saldo-label {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .saldo-valor {
+        font-size: 48px;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    .saldo-positivo {
+        color: black;
+    }
+
+    .saldo-negativo {
+        color: red;
+    }
+
+    .secao {
+        margin-bottom: 40px;
+    }
+
+    h2 {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid black;
+    }
+
+    .formulario {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    input {
+        padding: 8px;
+        border: 1px solid black;
+        border-radius: 4px;
+        font-size: 13px;
+    }
+
+    input[type="text"] {
+        flex: 2;
+        min-width: 150px;
+    }
+
+    input[type="number"] {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    button {
+        padding: 8px 15px;
+        background-color: black;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #333;
+    }
+
+    .lista {
+        border: 1px solid black;
+        border-radius: 4px;
+        min-height: 100px;
+    }
+
+    .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .item:last-child {
+        border-bottom: none;
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-descricao {
+        font-weight: bold;
+        margin-bottom: 3px;
         font-size: 14px;
     }
 
-    .record-time {
-        font-weight: 600;
-        color: #667eea;
+    .item-valor {
+        font-size: 16px;
     }
 
-    .win-message {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    .btn-pagar {
+        background-color: #e74c3c;
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+
+    .btn-pagar:hover {
+        background-color: #c0392b;
+    }
+
+    .item-paga {
+        opacity: 0.5;
+        text-decoration: line-through;
+    }
+
+    .lista-vazia {
         text-align: center;
-        z-index: 1000;
-    }
-
-    .win-message.show {
-        display: block;
-        animation: popup 0.5s ease-out;
-    }
-
-    @keyframes popup {
-        0% {
-            transform: translate(-50%, -50%) scale(0.5);
-            opacity: 0;
-        }
-        100% {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-    }
-
-    .win-message h2 {
-        color: #667eea;
-        margin-bottom: 20px;
-        font-size: 32px;
-    }
-
-    .win-message p {
+        padding: 20px;
         color: #666;
-        margin-bottom: 30px;
-        font-size: 18px;
+        font-size: 13px;
     }
 
-    .overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 999;
+    .secao {
+        margin-bottom: 40px;
     }
 
-    .overlay.show {
-        display: block;
+    h2 {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid black;
     }
 </style>
-
+```
 
 </head>
 <body>
-    <div class="container">
-        <h1>🎮 RACHA CUCA</h1>
-
-```
-    <div class="menu" id="menu">
-        <div class="difficulty-group">
-            <label>Escolha a Dificuldade:</label>
-            <div class="difficulty-buttons">
-                <button class="difficulty-btn active" data-difficulty="easy">Fácil (3x3)</button>
-                <button class="difficulty-btn" data-difficulty="medium">Médio (4x4)</button>
-                <button class="difficulty-btn" data-difficulty="hard">Difícil (5x5)</button>
-            </div>
-        </div>
-
-        <div class="color-picker-group">
-            <label>Escolha a Cor dos Números:</label>
-            <input type="color" class="color-input" id="colorPicker" value="#667eea">
-        </div>
-
-        <button class="start-btn" id="startBtn">▶️ JOGAR</button>
-
-        <div class="records" id="menuRecords">
-            <h3>🏆 Últimos Tempos</h3>
-            <div class="record-list" id="menuRecordList"></div>
-        </div>
+    <div class="saldo-container">
+        <div class="saldo-label">SALDO ATUAL</div>
+        <div class="saldo-valor saldo-positivo" id="saldo">R$ 0,00</div>
     </div>
 
-    <div class="game-screen" id="gameScreen">
-        <div class="game-info">
-            <div class="info-item">
-                <div class="info-label">Movimentos</div>
-                <div class="info-value" id="moves">0</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Tempo</div>
-                <div class="info-value" id="timer">00:00</div>
-            </div>
-        </div>
-
-        <div class="board" id="board"></div>
-
-        <div class="game-buttons">
-            <button class="game-btn reset-btn" id="resetBtn">🔄 Reiniciar</button>
-            <button class="game-btn menu-btn" id="menuBtn">🏠 Menu</button>
-        </div>
-
-        <div class="records">
-            <h3>🏆 Últimos Tempos</h3>
-            <div class="record-list" id="recordList"></div>
-        </div>
+```
+<div class="secao">
+    <h2>💰 Receitas</h2>
+    <div class="formulario">
+        <input type="text" id="receita-descricao" placeholder="Descrição">
+        <input type="number" id="receita-valor" placeholder="Valor" step="0.01">
+        <button onclick="adicionarReceita()">+ Adicionar</button>
+    </div>
+    <div class="lista" id="lista-receitas">
+        <div class="lista-vazia">Nenhuma receita adicionada</div>
     </div>
 </div>
 
-<div class="overlay" id="overlay"></div>
-<div class="win-message" id="winMessage">
-    <h2>🎉 Parabéns!</h2>
-    <p id="winText"></p>
-    <button class="start-btn" id="playAgainBtn">Jogar Novamente</button>
+<div class="secao">
+    <h2>💸 Despesas</h2>
+    <div class="formulario">
+        <input type="text" id="despesa-descricao" placeholder="Descrição">
+        <input type="number" id="despesa-valor" placeholder="Valor" step="0.01">
+        <button onclick="adicionarDespesa()">+ Adicionar</button>
+    </div>
+    <div class="lista" id="lista-despesas">
+        <div class="lista-vazia">Nenhuma despesa adicionada</div>
+    </div>
 </div>
 
 <script>
-    let size = 3;
-    let tiles = [];
-    let emptyIndex = 0;
-    let moves = 0;
-    let seconds = 0;
-    let timerInterval = null;
-    let selectedColor = '#667eea';
-    let difficulty = 'easy';
+    let receitas = [];
+    let despesas = [];
 
-    const menu = document.getElementById('menu');
-    const gameScreen = document.getElementById('gameScreen');
-    const board = document.getElementById('board');
-    const movesEl = document.getElementById('moves');
-    const timerEl = document.getElementById('timer');
-    const startBtn = document.getElementById('startBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const menuBtn = document.getElementById('menuBtn');
-    const colorPicker = document.getElementById('colorPicker');
-    const difficultyBtns = document.querySelectorAll('.difficulty-btn');
-    const winMessage = document.getElementById('winMessage');
-    const winText = document.getElementById('winText');
-    const playAgainBtn = document.getElementById('playAgainBtn');
-    const overlay = document.getElementById('overlay');
-    const recordList = document.getElementById('recordList');
-    const menuRecordList = document.getElementById('menuRecordList');
-
-    difficultyBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            difficultyBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            difficulty = btn.dataset.difficulty;
-            size = difficulty === 'easy' ? 3 : difficulty === 'medium' ? 4 : 5;
-        });
-    });
-
-    colorPicker.addEventListener('input', (e) => {
-        selectedColor = e.target.value;
-    });
-
-    startBtn.addEventListener('click', startGame);
-    resetBtn.addEventListener('click', resetGame);
-    menuBtn.addEventListener('click', showMenu);
-    playAgainBtn.addEventListener('click', () => {
-        winMessage.classList.remove('show');
-        overlay.classList.remove('show');
-        resetGame();
-    });
-
-    function startGame() {
-        menu.style.display = 'none';
-        gameScreen.style.display = 'block';
-        initGame();
+    function formatarMoeda(valor) {
+        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    function showMenu() {
-        gameScreen.style.display = 'none';
-        menu.style.display = 'flex';
-        stopTimer();
-        displayRecords(menuRecordList);
+    function calcularSaldo() {
+        const totalReceitas = receitas.reduce((sum, r) => sum + r.valor, 0);
+        const totalDespesasPagas = despesas.filter(d => d.paga).reduce((sum, d) => sum + d.valor, 0);
+        return totalReceitas - totalDespesasPagas;
     }
 
-    function initGame() {
-        moves = 0;
-        seconds = 0;
-        movesEl.textContent = '0';
-        timerEl.textContent = '00:00';
+    function atualizarSaldo() {
+        const saldo = calcularSaldo();
+        const saldoEl = document.getElementById('saldo');
+        saldoEl.textContent = formatarMoeda(saldo);
         
-        board.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-        
-        const totalTiles = size * size;
-        tiles = Array.from({length: totalTiles - 1}, (_, i) => i + 1);
-        tiles.push(0);
-        emptyIndex = totalTiles - 1;
-        
-        shuffleTiles();
-        renderBoard();
-        startTimer();
-        displayRecords(recordList);
-    }
-
-    function shuffleTiles() {
-        for (let i = 0; i < 1000; i++) {
-            const neighbors = getNeighbors(emptyIndex);
-            const randomNeighbor = neighbors[Math.floor(Math.random() * neighbors.length)];
-            swapTiles(emptyIndex, randomNeighbor);
+        if (saldo < 0) {
+            saldoEl.className = 'saldo-valor saldo-negativo';
+        } else {
+            saldoEl.className = 'saldo-valor saldo-positivo';
         }
     }
 
-    function getNeighbors(index) {
-        const neighbors = [];
-        const row = Math.floor(index / size);
-        const col = index % size;
-        
-        if (row > 0) neighbors.push(index - size);
-        if (row < size - 1) neighbors.push(index + size);
-        if (col > 0) neighbors.push(index - 1);
-        if (col < size - 1) neighbors.push(index + 1);
-        
-        return neighbors;
-    }
+    function adicionarReceita() {
+        const descricao = document.getElementById('receita-descricao').value;
+        const valor = parseFloat(document.getElementById('receita-valor').value);
 
-    function swapTiles(index1, index2) {
-        [tiles[index1], tiles[index2]] = [tiles[index2], tiles[index1]];
-        if (tiles[index1] === 0) emptyIndex = index1;
-        if (tiles[index2] === 0) emptyIndex = index2;
-    }
-
-    function renderBoard() {
-        board.innerHTML = '';
-        const fontSize = size === 3 ? '24px' : size === 4 ? '20px' : '16px';
-        
-        tiles.forEach((tile, index) => {
-            const tileEl = document.createElement('div');
-            tileEl.className = 'tile';
-            
-            if (tile === 0) {
-                tileEl.classList.add('empty');
-            } else {
-                tileEl.textContent = tile;
-                tileEl.style.color = selectedColor;
-                tileEl.style.fontSize = fontSize;
-                tileEl.addEventListener('click', () => moveTile(index));
-            }
-            
-            board.appendChild(tileEl);
-        });
-    }
-
-    function moveTile(index) {
-        const neighbors = getNeighbors(emptyIndex);
-        
-        if (neighbors.includes(index)) {
-            swapTiles(index, emptyIndex);
-            moves++;
-            movesEl.textContent = moves;
-            renderBoard();
-            
-            if (checkWin()) {
-                stopTimer();
-                showWinMessage();
-            }
-        }
-    }
-
-    function checkWin() {
-        for (let i = 0; i < tiles.length - 1; i++) {
-            if (tiles[i] !== i + 1) return false;
-        }
-        return tiles[tiles.length - 1] === 0;
-    }
-
-    function startTimer() {
-        stopTimer();
-        timerInterval = setInterval(() => {
-            seconds++;
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            timerEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }, 1000);
-    }
-
-    function stopTimer() {
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
-    }
-
-    function resetGame() {
-        stopTimer();
-        initGame();
-    }
-
-    function showWinMessage() {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        
-        winText.textContent = `Você completou em ${timeStr} com ${moves} movimentos!`;
-        winMessage.classList.add('show');
-        overlay.classList.add('show');
-        
-        saveRecord(timeStr, moves);
-        displayRecords(recordList);
-    }
-
-    function saveRecord(time, moves) {
-        const records = JSON.parse(localStorage.getItem('rachaChucaRecords') || '[]');
-        const record = {
-            time,
-            moves,
-            difficulty,
-            date: new Date().toLocaleString('pt-BR')
-        };
-        
-        records.unshift(record);
-        
-        if (records.length > 10) {
-            records.pop();
-        }
-        
-        localStorage.setItem('rachaChucaRecords', JSON.stringify(records));
-    }
-
-    function displayRecords(container) {
-        const records = JSON.parse(localStorage.getItem('rachaChucaRecords') || '[]');
-        
-        if (records.length === 0) {
-            container.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">Nenhum recorde ainda</div>';
+        if (!descricao || !valor || valor <= 0) {
+            alert('Por favor, preencha a descrição e um valor válido');
             return;
         }
+
+        receitas.push({ descricao, valor, id: Date.now() });
+        document.getElementById('receita-descricao').value = '';
+        document.getElementById('receita-valor').value = '';
         
-        container.innerHTML = records.slice(0, 5).map(record => `
-            <div class="record-item">
-                <span>${record.difficulty === 'easy' ? '3x3' : record.difficulty === 'medium' ? '4x4' : '5x5'} - ${record.moves} movimentos</span>
-                <span class="record-time">${record.time}</span>
+        renderizarReceitas();
+        atualizarSaldo();
+    }
+
+    function adicionarDespesa() {
+        const descricao = document.getElementById('despesa-descricao').value;
+        const valor = parseFloat(document.getElementById('despesa-valor').value);
+
+        if (!descricao || !valor || valor <= 0) {
+            alert('Por favor, preencha a descrição e um valor válido');
+            return;
+        }
+
+        despesas.push({ descricao, valor, paga: false, id: Date.now() });
+        document.getElementById('despesa-descricao').value = '';
+        document.getElementById('despesa-valor').value = '';
+        
+        renderizarDespesas();
+        atualizarSaldo();
+    }
+
+    function pagarDespesa(id) {
+        const despesa = despesas.find(d => d.id === id);
+        if (despesa) {
+            despesa.paga = true;
+            renderizarDespesas();
+            atualizarSaldo();
+        }
+    }
+
+    function renderizarReceitas() {
+        const lista = document.getElementById('lista-receitas');
+        
+        if (receitas.length === 0) {
+            lista.innerHTML = '<div class="lista-vazia">Nenhuma receita adicionada</div>';
+            return;
+        }
+
+        lista.innerHTML = receitas.map(r => `
+            <div class="item">
+                <div class="item-info">
+                    <div class="item-descricao">${r.descricao}</div>
+                    <div class="item-valor">${formatarMoeda(r.valor)}</div>
+                </div>
             </div>
         `).join('');
     }
 
-    displayRecords(menuRecordList);
+    function renderizarDespesas() {
+        const lista = document.getElementById('lista-despesas');
+        
+        if (despesas.length === 0) {
+            lista.innerHTML = '<div class="lista-vazia">Nenhuma despesa adicionada</div>';
+            return;
+        }
+
+        lista.innerHTML = despesas.map(d => `
+            <div class="item ${d.paga ? 'item-paga' : ''}">
+                <div class="item-info">
+                    <div class="item-descricao">${d.descricao}</div>
+                    <div class="item-valor">${formatarMoeda(d.valor)}</div>
+                </div>
+                ${!d.paga ? `<button class="btn-pagar" onclick="pagarDespesa(${d.id})">Pagar</button>` : '<span>✓ Paga</span>'}
+            </div>
+        `).join('');
+    }
+
+    // Permitir adicionar com Enter
+    document.getElementById('receita-valor').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') adicionarReceita();
+    });
+
+    document.getElementById('despesa-valor').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') adicionarDespesa();
+    });
 </script>
 ```
 
