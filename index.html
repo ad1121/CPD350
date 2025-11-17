@@ -12,7 +12,7 @@
             box-sizing: border-box;
         }
 
-
+```
     body {
         background-color: white;
         color: black;
@@ -72,6 +72,13 @@
         border: 1px solid black;
         border-radius: 4px;
         font-size: 13px;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    input:focus {
+        outline: 2px solid black;
+        transform: none;
     }
 
     input[type="text"] {
@@ -79,9 +86,10 @@
         min-width: 150px;
     }
 
-    input[type="number"] {
+    input[type="text"].valor-input {
         flex: 1;
         min-width: 100px;
+        text-align: right;
     }
 
     button {
@@ -163,7 +171,7 @@
         border-bottom: 2px solid black;
     }
 </style>
-
+```
 
 </head>
 <body>
@@ -172,12 +180,12 @@
         <div class="saldo-valor saldo-positivo" id="saldo">R$ 0,00</div>
     </div>
 
-
+```
 <div class="secao">
     <h2>💰 Receitas</h2>
     <div class="formulario">
         <input type="text" id="receita-descricao" placeholder="Descrição">
-        <input type="number" id="receita-valor" placeholder="Valor" step="0.01">
+        <input type="text" id="receita-valor" class="valor-input" placeholder="0,00">
         <button onclick="adicionarReceita()">+ Adicionar</button>
     </div>
     <div class="lista" id="lista-receitas">
@@ -189,7 +197,7 @@
     <h2>💸 Despesas</h2>
     <div class="formulario">
         <input type="text" id="despesa-descricao" placeholder="Descrição">
-        <input type="number" id="despesa-valor" placeholder="Valor" step="0.01">
+        <input type="text" id="despesa-valor" class="valor-input" placeholder="0,00">
         <button onclick="adicionarDespesa()">+ Adicionar</button>
     </div>
     <div class="lista" id="lista-despesas">
@@ -203,6 +211,58 @@
 
     function formatarMoeda(valor) {
         return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function formatarValorInput(valor) {
+        // Remove tudo que não é número
+        const numeros = valor.replace(/\D/g, '');
+        
+        if (!numeros) return '';
+        
+        // Converte para número dividindo por 100 (centavos)
+        const numero = parseInt(numeros) / 100;
+        
+        // Formata com ponto de milhar e vírgula decimal
+        return numero.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function converterParaNumero(valorFormatado) {
+        // Remove pontos de milhar e substitui vírgula por ponto
+        return parseFloat(valorFormatado.replace(/\./g, '').replace(',', '.'));
+    }
+
+    function configurarInputValor(inputId) {
+        const input = document.getElementById(inputId);
+        
+        input.addEventListener('input', function(e) {
+            const valorFormatado = formatarValorInput(e.target.value);
+            e.target.value = valorFormatado;
+        });
+
+        input.addEventListener('keypress', function(e) {
+            // Permite apenas números
+            if (e.key < '0' || e.key > '9') {
+                if (e.key === 'Enter') {
+                    if (inputId.includes('receita')) {
+                        adicionarReceita();
+                    } else {
+                        adicionarDespesa();
+                    }
+                }
+                e.preventDefault();
+            }
+        });
+
+        // Previne zoom em mobile
+        input.addEventListener('focus', function() {
+            const viewport = document.querySelector('meta[name=viewport]');
+            viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+        });
+
+        input.addEventListener('blur', function() {
+            const viewport = document.querySelector('meta[name=viewport]');
+            viewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+        });
     }
 
     function calcularSaldo() {
@@ -225,9 +285,10 @@
 
     function adicionarReceita() {
         const descricao = document.getElementById('receita-descricao').value;
-        const valor = parseFloat(document.getElementById('receita-valor').value);
+        const valorFormatado = document.getElementById('receita-valor').value;
+        const valor = converterParaNumero(valorFormatado);
 
-        if (!descricao || !valor || valor <= 0) {
+        if (!descricao || !valorFormatado || valor <= 0) {
             alert('Por favor, preencha a descrição e um valor válido');
             return;
         }
@@ -242,9 +303,10 @@
 
     function adicionarDespesa() {
         const descricao = document.getElementById('despesa-descricao').value;
-        const valor = parseFloat(document.getElementById('despesa-valor').value);
+        const valorFormatado = document.getElementById('despesa-valor').value;
+        const valor = converterParaNumero(valorFormatado);
 
-        if (!descricao || !valor || valor <= 0) {
+        if (!descricao || !valorFormatado || valor <= 0) {
             alert('Por favor, preencha a descrição e um valor válido');
             return;
         }
@@ -303,16 +365,20 @@
         `).join('');
     }
 
-    // Permitir adicionar com Enter
-    document.getElementById('receita-valor').addEventListener('keypress', function(e) {
+    // Inicializar inputs de valor
+    configurarInputValor('receita-valor');
+    configurarInputValor('despesa-valor');
+
+    // Permitir adicionar com Enter na descrição
+    document.getElementById('receita-descricao').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') adicionarReceita();
     });
 
-    document.getElementById('despesa-valor').addEventListener('keypress', function(e) {
+    document.getElementById('despesa-descricao').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') adicionarDespesa();
     });
 </script>
-
+```
 
 </body>
 </html>
