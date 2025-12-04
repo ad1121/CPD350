@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
@@ -6,13 +7,14 @@
 <title>Controle Financeiro</title>
 
 <!-- Chart.js CDN -->
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root{
-    --primaria: #FF3B5C;   /* rosa/vermelho vivo */
-    --secundaria: #FFB400; /* amarelo destaque */
-    --sucesso: #2ECC71;    /* verde */
+    --primaria: #FF3B5C;
+    --secundaria: #FFB400;
+    --sucesso: #2ECC71;
     --fundo: #F6F7FB;
     --texto: #222;
     --card-bg: #ffffff;
@@ -27,7 +29,6 @@ body{
     -webkit-font-smoothing:antialiased;
 }
 
-/* Header */
 .header{
     background: linear-gradient(90deg,var(--primaria), #ff6b84);
     color:white;
@@ -41,7 +42,6 @@ body{
     animation:fadeInDown .45s ease;
 }
 
-/* Main layout */
 .main{
     display:grid;
     grid-template-columns: 1fr 380px;
@@ -52,7 +52,6 @@ body{
     .main{ grid-template-columns: 1fr; }
 }
 
-/* Card */
 .card{
     background:var(--card-bg);
     border-radius:12px;
@@ -75,7 +74,6 @@ body{
 }
 .saldo .valor.neg{ color: #e74c3c; }
 
-/* Formulario - inputs lado a lado */
 .form-row{
     display:flex;
     gap:10px;
@@ -104,7 +102,6 @@ body{
 .btn-add-receita{ background: linear-gradient(90deg,var(--sucesso), #22b66a); color:white }
 .btn-add-despesa{ background: linear-gradient(90deg,var(--primaria), #ff6b84); color:white }
 
-/* Listas */
 .lista{
     margin-top:8px;
     display:flex;
@@ -178,7 +175,6 @@ body{
     font-weight:700;
 }
 
-/* Right column (gráfico + resumo) */
 .aside {
     display:flex;
     flex-direction:column;
@@ -189,16 +185,17 @@ body{
     display:flex;
     justify-content:space-between;
     gap:10px;
-    padding:12px;
+    padding:16px;
     border-radius:10px;
-    background:#fff;
+    background:linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
     align-items:center;
+    flex-wrap:wrap;
 }
-.resumo .box{ text-align:center; }
-.resumo .box small{ display:block; color:#666; }
-.resumo .box .num{ font-weight:800; font-size:18px; margin-top:6px; }
+.resumo .box{ text-align:center; flex:1; min-width:100px; }
+.resumo .box small{ display:block; color:#666; font-size:12px; margin-bottom:6px; }
+.resumo .box .num{ font-weight:800; font-size:18px; }
+.resumo .box .num.neg{ color: #e74c3c; }
 
-/* gráfico */
 .grafico-card{ padding:14px; border-radius:10px; background:#fff; }
 canvas{ width:100% !important; height:260px !important; }
 
@@ -209,10 +206,10 @@ canvas{ width:100% !important; height:260px !important; }
     text-align:center;
 }
 
-/* animações */
 @keyframes fadeInUp { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
 @keyframes fadeInDown { from{opacity:0; transform:translateY(-8px)} to{opacity:1; transform:none} }
 </style>
+
 </head>
 <body>
 
@@ -220,89 +217,86 @@ canvas{ width:100% !important; height:260px !important; }
 
 <div class="main">
 
-    <!-- COLUNA PRINCIPAL -->
-    <div class="card">
+```
+<div class="card">
 
-        <div class="saldo">
-            <small>SALDO ATUAL</small>
-            <div id="saldoValor" class="valor">R$ 0,00</div>
+    <div class="resumo" style="margin-bottom:12px">
+        <div class="box">
+            <small>Total Receitas</small>
+            <div id="totalReceitas" class="num">R$ 0,00</div>
         </div>
-
-        <!-- Formulário Receitas -->
-        <div style="margin-bottom:10px">
-            <strong>Adicionar Receita</strong>
-            <div class="form-row" style="margin-top:8px">
-                <input id="rec-desc" type="text" placeholder="Descrição (ex: Salário)" />
-                <input id="rec-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
-                <button class="btn-add-receita" onclick="adicionarReceita()">Adicionar</button>
-            </div>
+        <div class="box">
+            <small>Total Despesas</small>
+            <div id="totalDespesas" class="num">R$ 0,00</div>
         </div>
-
-        <!-- Lista de Receitas -->
-        <div>
-            <strong>Receitas</strong>
-            <div id="lista-receitas" class="lista" style="margin-top:8px">
-                <div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma receita</div>
-            </div>
+        <div class="box">
+            <small>Despesas Pagas</small>
+            <div id="totalDespesasPagas" class="num">R$ 0,00</div>
         </div>
-
-        <hr style="margin:16px 0;border:none;border-top:1px dashed rgba(0,0,0,0.06)"/>
-
-        <!-- Formulário Despesas -->
-        <div style="margin-bottom:10px">
-            <strong>Adicionar Despesa</strong>
-            <div class="form-row" style="margin-top:8px">
-                <input id="des-desc" type="text" placeholder="Descrição (ex: Almoço)" />
-                <input id="des-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
-                <button class="btn-add-despesa" onclick="adicionarDespesa()">Adicionar</button>
-            </div>
+        <div class="box">
+            <small>Saldo Atual</small>
+            <div id="saldoValor" class="num">R$ 0,00</div>
         </div>
-
-        <!-- Lista de Despesas -->
-        <div>
-            <strong>Despesas</strong>
-            <div id="lista-despesas" class="lista" style="margin-top:8px">
-                <div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma despesa</div>
-            </div>
-        </div>
-
-        <div class="rodape">Os lançamentos ficam salvos no seu navegador (localStorage).</div>
     </div>
 
-    <!-- COLUNA LATERAL (RESUMO + GRÁFICO) -->
-    <aside class="aside">
-
-        <div class="resumo card">
-            <div class="box">
-                <small>Total Receitas</small>
-                <div id="totalReceitas" class="num">R$ 0,00</div>
-            </div>
-            <div class="box">
-                <small>Despesas Pagas</small>
-                <div id="totalDespesasPagas" class="num">R$ 0,00</div>
-            </div>
+    <div style="margin-bottom:10px">
+        <strong>Adicionar Receita</strong>
+        <div class="form-row" style="margin-top:8px">
+            <input id="rec-desc" type="text" placeholder="Descrição (ex: Salário)" />
+            <input id="rec-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
+            <button class="btn-add-receita" onclick="adicionarReceita()">Adicionar</button>
         </div>
+    </div>
 
-        <div class="grafico-card card">
-            <strong style="display:block;margin-bottom:10px">Distribuição</strong>
-            <canvas id="pizzaGrafico"></canvas>
+    <div>
+        <strong>Receitas</strong>
+        <div id="lista-receitas" class="lista" style="margin-top:8px">
+            <div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma receita</div>
         </div>
+    </div>
 
-        <div class="card">
-            <strong>Atalhos</strong>
-            <div style="display:flex;gap:8px;margin-top:10px">
-                <button onclick="limparTudo()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#eee;font-weight:700;cursor:pointer">Limpar Tudo</button>
-                <button onclick="exportarJSON()" style="flex:1;padding:10px;border-radius:8px;border:none;background:var(--primaria);color:#fff;font-weight:700;cursor:pointer">Exportar</button>
-            </div>
+    <hr style="margin:16px 0;border:none;border-top:1px dashed rgba(0,0,0,0.06)"/>
+
+    <div style="margin-bottom:10px">
+        <strong>Adicionar Despesa</strong>
+        <div class="form-row" style="margin-top:8px">
+            <input id="des-desc" type="text" placeholder="Descrição (ex: Almoço)" />
+            <input id="des-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
+            <button class="btn-add-despesa" onclick="adicionarDespesa()">Adicionar</button>
         </div>
+    </div>
 
-    </aside>
+    <div>
+        <strong>Despesas</strong>
+        <div id="lista-despesas" class="lista" style="margin-top:8px">
+            <div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma despesa</div>
+        </div>
+    </div>
+
+    <div class="rodape">Os lançamentos ficam salvos no seu navegador (localStorage).</div>
+</div>
+
+<aside class="aside">
+
+    <div class="grafico-card card">
+        <strong style="display:block;margin-bottom:10px">Distribuição</strong>
+        <canvas id="pizzaGrafico"></canvas>
+    </div>
+
+    <div class="card">
+        <strong>Atalhos</strong>
+        <div style="display:flex;gap:8px;margin-top:10px">
+            <button onclick="limparTudo()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#eee;font-weight:700;cursor:pointer">Limpar Tudo</button>
+            <button onclick="exportarJSON()" style="flex:1;padding:10px;border-radius:8px;border:none;background:var(--primaria);color:#fff;font-weight:700;cursor:pointer">Exportar</button>
+        </div>
+    </div>
+
+</aside>
+```
+
 </div>
 
 <script>
-/* -----------------------
-   Dados e persistência
-   ----------------------- */
 let receitas = JSON.parse(localStorage.getItem('minhas_receitas_v1')) || [];
 let despesas = JSON.parse(localStorage.getItem('minhas_despesas_v1')) || [];
 
@@ -311,9 +305,6 @@ function salvar(){
     localStorage.setItem('minhas_despesas_v1', JSON.stringify(despesas));
 }
 
-/* -----------------------
-   Utilitários de formatação
-   ----------------------- */
 function formatarMoeda(num){
     return num.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
 }
@@ -328,9 +319,6 @@ function strToNumber(formatted){
     return parseFloat(formatted.replace(/\./g,'').replace(',','.')) || 0;
 }
 
-/* -----------------------
-   Elementos DOM
-   ----------------------- */
 const elRecDesc = document.getElementById('rec-desc');
 const elRecVal = document.getElementById('rec-valor');
 const elDesDesc = document.getElementById('des-desc');
@@ -340,16 +328,13 @@ const elListaReceitas = document.getElementById('lista-receitas');
 const elListaDespesas = document.getElementById('lista-despesas');
 const elSaldoValor = document.getElementById('saldoValor');
 const elTotalReceitas = document.getElementById('totalReceitas');
+const elTotalDespesas = document.getElementById('totalDespesas');
 const elTotalDespesasPagas = document.getElementById('totalDespesasPagas');
 
-/* -----------------------
-   Eventos: formatação dinâmica nos inputs (apenas números)
-   ----------------------- */
 [elRecVal, elDesVal].forEach(inp=>{
     inp.addEventListener('input', e=>{
         const start = e.target.selectionStart;
         e.target.value = formatarInputValor(e.target.value);
-        // mover cursor para o final — simples e robusto
         e.target.selectionStart = e.target.selectionEnd = e.target.value.length;
     });
     inp.addEventListener('keypress', e=>{
@@ -362,28 +347,24 @@ const elTotalDespesasPagas = document.getElementById('totalDespesasPagas');
     });
 });
 
-/* -----------------------
-   Cálculos e atualização de UI
-   ----------------------- */
 function calcularTotais(){
     const totalReceitas = receitas.reduce((s,r)=>s + r.valor, 0);
+    const totalDespesas = despesas.reduce((s,d)=>s + d.valor, 0);
     const totalDespesasPagas = despesas.filter(d=>d.paga).reduce((s,d)=>s + d.valor, 0);
-    return { totalReceitas, totalDespesasPagas };
+    return { totalReceitas, totalDespesas, totalDespesasPagas };
 }
 
 function atualizarSaldo(){
-    const { totalReceitas, totalDespesasPagas } = calcularTotais();
+    const { totalReceitas, totalDespesas, totalDespesasPagas } = calcularTotais();
     const saldo = totalReceitas - totalDespesasPagas;
     elSaldoValor.textContent = formatarMoeda(saldo);
     if(saldo < 0) elSaldoValor.classList.add('neg'); else elSaldoValor.classList.remove('neg');
 
     elTotalReceitas.textContent = formatarMoeda(totalReceitas);
+    elTotalDespesas.textContent = formatarMoeda(totalDespesas);
     elTotalDespesasPagas.textContent = formatarMoeda(totalDespesasPagas);
 }
 
-/* -----------------------
-   Renderizar listas
-   ----------------------- */
 function renderizarReceitas(){
     if(receitas.length === 0){
         elListaReceitas.innerHTML = '<div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma receita</div>';
@@ -429,9 +410,6 @@ function renderizarDespesas(){
     `).join('');
 }
 
-/* -----------------------
-   Ações principais
-   ----------------------- */
 function adicionarReceita(){
     const desc = elRecDesc.value.trim();
     const rawVal = elRecVal.value.trim();
@@ -443,7 +421,7 @@ function adicionarReceita(){
     }
 
     const item = { id: Date.now(), descricao: desc, valor };
-    receitas.unshift(item); // novo no topo
+    receitas.unshift(item);
     salvar();
     elRecDesc.value = '';
     elRecVal.value = '';
@@ -508,9 +486,6 @@ function removerDespesa(id){
     atualizarGrafico();
 }
 
-/* -----------------------
-   Export / limpar
-   ----------------------- */
 function exportarJSON(){
     const data = { receitas, despesas, exportadoEm: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -533,9 +508,6 @@ function limparTudo(){
     atualizarGrafico();
 }
 
-/* -----------------------
-   Segurança: escape simples para descrição (textos curtos)
-   ----------------------- */
 function escapeHtml(str){
     return String(str)
         .replace(/&/g,'&amp;')
@@ -545,9 +517,6 @@ function escapeHtml(str){
         .replace(/'/g,'&#39;');
 }
 
-/* -----------------------
-   Gráfico (Chart.js)
-   ----------------------- */
 let pizzaGrafico = null;
 function atualizarGrafico(){
     const totalReceitas = receitas.reduce((s,r)=>s + r.valor, 0);
@@ -580,9 +549,6 @@ function atualizarGrafico(){
     pizzaGrafico = new Chart(ctx, { type: 'pie', data, options });
 }
 
-/* -----------------------
-   Inicializa tudo na carga
-   ----------------------- */
 function inicializar(){
     renderizarReceitas();
     renderizarDespesas();
