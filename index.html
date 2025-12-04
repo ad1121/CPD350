@@ -5,11 +5,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Controle Financeiro</title>
-
-<!-- Chart.js CDN -->
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
 :root{
     --primaria: #FF3B5C;
@@ -19,7 +15,6 @@
     --texto: #222;
     --card-bg: #ffffff;
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
 body{
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
@@ -28,7 +23,6 @@ body{
     padding:18px;
     -webkit-font-smoothing:antialiased;
 }
-
 .header{
     background: linear-gradient(90deg,var(--primaria), #ff6b84);
     color:white;
@@ -41,17 +35,14 @@ body{
     margin-bottom:18px;
     animation:fadeInDown .45s ease;
 }
-
 .main{
     display:grid;
     grid-template-columns: 1fr 380px;
     gap:18px;
 }
-
 @media(max-width:920px){
     .main{ grid-template-columns: 1fr; }
 }
-
 .card{
     background:var(--card-bg);
     border-radius:12px;
@@ -59,21 +50,20 @@ body{
     box-shadow:0 6px 18px rgba(8,8,8,0.06);
     animation:fadeInUp .45s ease;
 }
-
-.saldo{
-    text-align:center;
-    padding:18px;
+.resumo{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:16px;
     border-radius:10px;
-    margin-bottom:12px;
     background:linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
+    align-items:center;
+    flex-wrap:wrap;
 }
-.saldo small{display:block;color:#666;margin-bottom:6px}
-.saldo .valor{
-    font-size:34px;
-    font-weight:800;
-}
-.saldo .valor.neg{ color: #e74c3c; }
-
+.resumo .box{ text-align:center; flex:1; min-width:100px; }
+.resumo .box small{ display:block; color:#666; font-size:12px; margin-bottom:6px; }
+.resumo .box .num{ font-weight:800; font-size:18px; }
+.resumo .box .num.neg{ color: #e74c3c; }
 .form-row{
     display:flex;
     gap:10px;
@@ -101,7 +91,6 @@ body{
 }
 .btn-add-receita{ background: linear-gradient(90deg,var(--sucesso), #22b66a); color:white }
 .btn-add-despesa{ background: linear-gradient(90deg,var(--primaria), #ff6b84); color:white }
-
 .lista{
     margin-top:8px;
     display:flex;
@@ -119,7 +108,6 @@ body{
     transition: transform .12s ease, box-shadow .12s ease;
 }
 .item:hover{ transform: translateY(-4px); box-shadow:0 10px 20px rgba(0,0,0,0.06); }
-
 .item .meta{
     display:flex;
     flex-direction:column;
@@ -141,7 +129,6 @@ body{
 }
 .item.paga .valor{ color: #999 }
 .item.paga{ opacity:.6; text-decoration: line-through; }
-
 .item .acoes{
     display:flex;
     gap:8px;
@@ -174,137 +161,97 @@ body{
     cursor:pointer;
     font-weight:700;
 }
-
 .aside {
     display:flex;
     flex-direction:column;
     gap:12px;
 }
-
-.resumo{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    padding:16px;
-    border-radius:10px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
-    align-items:center;
-    flex-wrap:wrap;
-}
-.resumo .box{ text-align:center; flex:1; min-width:100px; }
-.resumo .box small{ display:block; color:#666; font-size:12px; margin-bottom:6px; }
-.resumo .box .num{ font-weight:800; font-size:18px; }
-.resumo .box .num.neg{ color: #e74c3c; }
-
 .grafico-card{ padding:14px; border-radius:10px; background:#fff; }
 canvas{ width:100% !important; height:260px !important; }
-
 .rodape{
     margin-top:12px;
     font-size:13px;
     color:#666;
     text-align:center;
 }
-
 @keyframes fadeInUp { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
 @keyframes fadeInDown { from{opacity:0; transform:translateY(-8px)} to{opacity:1; transform:none} }
 </style>
-
 </head>
 <body>
-
 <div class="header">Controle Financeiro</div>
-
 <div class="main">
-
-```
-<div class="card">
-
-    <div class="resumo" style="margin-bottom:12px">
-        <div class="box">
-            <small>Total Receitas</small>
-            <div id="totalReceitas" class="num">R$ 0,00</div>
-        </div>
-        <div class="box">
-            <small>Total Despesas</small>
-            <div id="totalDespesas" class="num">R$ 0,00</div>
-        </div>
-        <div class="box">
-            <small>Despesas Pagas</small>
-            <div id="totalDespesasPagas" class="num">R$ 0,00</div>
-        </div>
-        <div class="box">
-            <small>Saldo Atual</small>
-            <div id="saldoValor" class="num">R$ 0,00</div>
-        </div>
-    </div>
-
-    <div style="margin-bottom:10px">
-        <strong>Adicionar Receita</strong>
-        <div class="form-row" style="margin-top:8px">
-            <input id="rec-desc" type="text" placeholder="Descrição (ex: Salário)" />
-            <input id="rec-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
-            <button class="btn-add-receita" onclick="adicionarReceita()">Adicionar</button>
-        </div>
-    </div>
-
-    <div>
-        <strong>Receitas</strong>
-        <div id="lista-receitas" class="lista" style="margin-top:8px">
-            <div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma receita</div>
-        </div>
-    </div>
-
-    <hr style="margin:16px 0;border:none;border-top:1px dashed rgba(0,0,0,0.06)"/>
-
-    <div style="margin-bottom:10px">
-        <strong>Adicionar Despesa</strong>
-        <div class="form-row" style="margin-top:8px">
-            <input id="des-desc" type="text" placeholder="Descrição (ex: Almoço)" />
-            <input id="des-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
-            <button class="btn-add-despesa" onclick="adicionarDespesa()">Adicionar</button>
-        </div>
-    </div>
-
-    <div>
-        <strong>Despesas</strong>
-        <div id="lista-despesas" class="lista" style="margin-top:8px">
-            <div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma despesa</div>
-        </div>
-    </div>
-
-    <div class="rodape">Os lançamentos ficam salvos no seu navegador (localStorage).</div>
-</div>
-
-<aside class="aside">
-
-    <div class="grafico-card card">
-        <strong style="display:block;margin-bottom:10px">Distribuição</strong>
-        <canvas id="pizzaGrafico"></canvas>
-    </div>
-
     <div class="card">
-        <strong>Atalhos</strong>
-        <div style="display:flex;gap:8px;margin-top:10px">
-            <button onclick="limparTudo()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#eee;font-weight:700;cursor:pointer">Limpar Tudo</button>
-            <button onclick="exportarJSON()" style="flex:1;padding:10px;border-radius:8px;border:none;background:var(--primaria);color:#fff;font-weight:700;cursor:pointer">Exportar</button>
+        <div class="resumo" style="margin-bottom:12px">
+            <div class="box">
+                <small>Total Receitas</small>
+                <div id="totalReceitas" class="num">R$ 0,00</div>
+            </div>
+            <div class="box">
+                <small>Total Despesas</small>
+                <div id="totalDespesas" class="num">R$ 0,00</div>
+            </div>
+            <div class="box">
+                <small>Despesas Pendentes</small>
+                <div id="totalDespesasPendentes" class="num">R$ 0,00</div>
+            </div>
+            <div class="box">
+                <small>Saldo Atual</small>
+                <div id="saldoValor" class="num">R$ 0,00</div>
+            </div>
         </div>
+        <div style="margin-bottom:10px">
+            <strong>Adicionar Receita</strong>
+            <div class="form-row" style="margin-top:8px">
+                <input id="rec-desc" type="text" placeholder="Descrição (ex: Salário)" />
+                <input id="rec-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
+                <button class="btn-add-receita" onclick="adicionarReceita()">Adicionar</button>
+            </div>
+        </div>
+        <div>
+            <strong>Receitas</strong>
+            <div id="lista-receitas" class="lista" style="margin-top:8px">
+                <div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma receita</div>
+            </div>
+        </div>
+        <hr style="margin:16px 0;border:none;border-top:1px dashed rgba(0,0,0,0.06)"/>
+        <div style="margin-bottom:10px">
+            <strong>Adicionar Despesa</strong>
+            <div class="form-row" style="margin-top:8px">
+                <input id="des-desc" type="text" placeholder="Descrição (ex: Almoço)" />
+                <input id="des-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
+                <button class="btn-add-despesa" onclick="adicionarDespesa()">Adicionar</button>
+            </div>
+        </div>
+        <div>
+            <strong>Despesas</strong>
+            <div id="lista-despesas" class="lista" style="margin-top:8px">
+                <div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma despesa</div>
+            </div>
+        </div>
+        <div class="rodape">Os lançamentos ficam salvos no seu navegador (localStorage).</div>
     </div>
-
-</aside>
-```
-
+    <aside class="aside">
+        <div class="grafico-card card">
+            <strong style="display:block;margin-bottom:10px">Distribuição</strong>
+            <canvas id="pizzaGrafico"></canvas>
+        </div>
+        <div class="card">
+            <strong>Atalhos</strong>
+            <div style="display:flex;gap:8px;margin-top:10px">
+                <button onclick="limparTudo()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#eee;font-weight:700;cursor:pointer">Limpar Tudo</button>
+                <button onclick="exportarJSON()" style="flex:1;padding:10px;border-radius:8px;border:none;background:var(--primaria);color:#fff;font-weight:700;cursor:pointer">Exportar</button>
+            </div>
+        </div>
+    </aside>
 </div>
-
 <script>
 let receitas = JSON.parse(localStorage.getItem('minhas_receitas_v1')) || [];
 let despesas = JSON.parse(localStorage.getItem('minhas_despesas_v1')) || [];
-
 function salvar(){
     localStorage.setItem('minhas_receitas_v1', JSON.stringify(receitas));
     localStorage.setItem('minhas_despesas_v1', JSON.stringify(despesas));
 }
-
 function formatarMoeda(num){
     return num.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
 }
@@ -318,22 +265,18 @@ function strToNumber(formatted){
     if(!formatted) return 0;
     return parseFloat(formatted.replace(/\./g,'').replace(',','.')) || 0;
 }
-
 const elRecDesc = document.getElementById('rec-desc');
 const elRecVal = document.getElementById('rec-valor');
 const elDesDesc = document.getElementById('des-desc');
 const elDesVal = document.getElementById('des-valor');
-
 const elListaReceitas = document.getElementById('lista-receitas');
 const elListaDespesas = document.getElementById('lista-despesas');
 const elSaldoValor = document.getElementById('saldoValor');
 const elTotalReceitas = document.getElementById('totalReceitas');
 const elTotalDespesas = document.getElementById('totalDespesas');
-const elTotalDespesasPagas = document.getElementById('totalDespesasPagas');
-
+const elTotalDespesasPendentes = document.getElementById('totalDespesasPendentes');
 [elRecVal, elDesVal].forEach(inp=>{
     inp.addEventListener('input', e=>{
-        const start = e.target.selectionStart;
         e.target.value = formatarInputValor(e.target.value);
         e.target.selectionStart = e.target.selectionEnd = e.target.value.length;
     });
@@ -346,25 +289,22 @@ const elTotalDespesasPagas = document.getElementById('totalDespesasPagas');
         if(e.key < '0' || e.key > '9') e.preventDefault();
     });
 });
-
 function calcularTotais(){
     const totalReceitas = receitas.reduce((s,r)=>s + r.valor, 0);
     const totalDespesas = despesas.reduce((s,d)=>s + d.valor, 0);
     const totalDespesasPagas = despesas.filter(d=>d.paga).reduce((s,d)=>s + d.valor, 0);
-    return { totalReceitas, totalDespesas, totalDespesasPagas };
+    const totalDespesasPendentes = despesas.filter(d=>!d.paga).reduce((s,d)=>s + d.valor, 0);
+    return { totalReceitas, totalDespesas, totalDespesasPagas, totalDespesasPendentes };
 }
-
 function atualizarSaldo(){
-    const { totalReceitas, totalDespesas, totalDespesasPagas } = calcularTotais();
+    const { totalReceitas, totalDespesas, totalDespesasPagas, totalDespesasPendentes } = calcularTotais();
     const saldo = totalReceitas - totalDespesasPagas;
     elSaldoValor.textContent = formatarMoeda(saldo);
     if(saldo < 0) elSaldoValor.classList.add('neg'); else elSaldoValor.classList.remove('neg');
-
     elTotalReceitas.textContent = formatarMoeda(totalReceitas);
     elTotalDespesas.textContent = formatarMoeda(totalDespesas);
-    elTotalDespesasPagas.textContent = formatarMoeda(totalDespesasPagas);
+    elTotalDespesasPendentes.textContent = formatarMoeda(totalDespesasPendentes);
 }
-
 function renderizarReceitas(){
     if(receitas.length === 0){
         elListaReceitas.innerHTML = '<div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma receita</div>';
@@ -384,7 +324,6 @@ function renderizarReceitas(){
         </div>
     `).join('');
 }
-
 function renderizarDespesas(){
     if(despesas.length === 0){
         elListaDespesas.innerHTML = '<div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma despesa</div>';
@@ -395,7 +334,6 @@ function renderizarDespesas(){
             <div class="meta">
                 <div class="descricao">${escapeHtml(d.descricao)}</div>
             </div>
-
             <div style="display:flex;align-items:center;gap:10px">
                 <div class="valor">${formatarMoeda(d.valor)}</div>
                 <div class="acoes">
@@ -409,17 +347,14 @@ function renderizarDespesas(){
         </div>
     `).join('');
 }
-
 function adicionarReceita(){
     const desc = elRecDesc.value.trim();
     const rawVal = elRecVal.value.trim();
     const valor = strToNumber(rawVal);
-
     if(!desc || valor <= 0){
         alert('Preencha descrição e um valor válido para a receita.');
         return;
     }
-
     const item = { id: Date.now(), descricao: desc, valor };
     receitas.unshift(item);
     salvar();
@@ -429,17 +364,14 @@ function adicionarReceita(){
     atualizarSaldo();
     atualizarGrafico();
 }
-
 function adicionarDespesa(){
     const desc = elDesDesc.value.trim();
     const rawVal = elDesVal.value.trim();
     const valor = strToNumber(rawVal);
-
     if(!desc || valor <= 0){
         alert('Preencha descrição e um valor válido para a despesa.');
         return;
     }
-
     const item = { id: Date.now(), descricao: desc, valor, paga:false };
     despesas.unshift(item);
     salvar();
@@ -449,7 +381,6 @@ function adicionarDespesa(){
     atualizarSaldo();
     atualizarGrafico();
 }
-
 function pagarDespesa(id){
     const d = despesas.find(x=>x.id === id);
     if(!d) return;
@@ -468,7 +399,6 @@ function desfazerPagamento(id){
     atualizarSaldo();
     atualizarGrafico();
 }
-
 function removerReceita(id){
     if(!confirm('Remover esta receita?')) return;
     receitas = receitas.filter(r=> r.id !== id);
@@ -485,7 +415,6 @@ function removerDespesa(id){
     atualizarSaldo();
     atualizarGrafico();
 }
-
 function exportarJSON(){
     const data = { receitas, despesas, exportadoEm: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -496,7 +425,6 @@ function exportarJSON(){
     a.click();
     URL.revokeObjectURL(url);
 }
-
 function limparTudo(){
     if(!confirm('Apagar todas as receitas e despesas?')) return;
     receitas = [];
@@ -507,7 +435,6 @@ function limparTudo(){
     atualizarSaldo();
     atualizarGrafico();
 }
-
 function escapeHtml(str){
     return String(str)
         .replace(/&/g,'&amp;')
@@ -516,14 +443,11 @@ function escapeHtml(str){
         .replace(/"/g,'&quot;')
         .replace(/'/g,'&#39;');
 }
-
 let pizzaGrafico = null;
 function atualizarGrafico(){
     const totalReceitas = receitas.reduce((s,r)=>s + r.valor, 0);
     const totalDespesasPagas = despesas.filter(d=>d.paga).reduce((s,d)=>s + d.valor, 0);
-
     const ctx = document.getElementById('pizzaGrafico').getContext('2d');
-
     const data = {
         labels: ['Receitas', 'Despesas Pagas'],
         datasets: [{
@@ -533,7 +457,6 @@ function atualizarGrafico(){
             borderRadius:4
         }]
     };
-
     const options = {
         plugins: {
             legend: { position: 'bottom' },
@@ -544,11 +467,9 @@ function atualizarGrafico(){
         maintainAspectRatio: false,
         responsive: true
     };
-
     if(pizzaGrafico) pizzaGrafico.destroy();
     pizzaGrafico = new Chart(ctx, { type: 'pie', data, options });
 }
-
 function inicializar(){
     renderizarReceitas();
     renderizarDespesas();
@@ -557,6 +478,5 @@ function inicializar(){
 }
 inicializar();
 </script>
-
 </body>
 </html>
