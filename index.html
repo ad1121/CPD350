@@ -505,8 +505,13 @@ canvas{ width:100% !important; height:300px !important; }
                 </div>
             </div>
             
-            <div>
-                <h3 style="margin-bottom:12px">💳 Despesas</h3>
+            <div style="margin-bottom:24px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                    <h3 style="margin:0">💳 Despesas</h3>
+                    <span style="font-size:13px;color:#666;background:#f8f9fa;padding:6px 12px;border-radius:8px">
+                        📅 Exibindo: <strong id="mes-atual-nome"></strong>
+                    </span>
+                </div>
                 <div id="lista-despesas" class="lista">
                     <div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma despesa cadastrada</div>
                 </div>
@@ -834,7 +839,21 @@ function renderizarDespesas(){
         el.innerHTML = '<div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma despesa cadastrada</div>';
         return;
     }
-    el.innerHTML = despesas.map(d => `
+    
+    // Pegar mês atual
+    const mesAtual = new Date().getMonth(); // 0-11
+    const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const mesAtualNome = nomesMeses[mesAtual];
+    
+    // Filtrar apenas despesas do mês atual ou sem mês definido
+    const despesasVisiveis = despesas.filter(d => !d.mes || d.mes === mesAtualNome);
+    
+    if(despesasVisiveis.length === 0){
+        el.innerHTML = '<div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma despesa para este mês</div>';
+        return;
+    }
+    
+    el.innerHTML = despesasVisiveis.map(d => `
         <div class="item ${d.paga ? 'paga' : ''}">
             <div class="meta">
                 <div class="descricao">${escapeHtml(d.descricao)}</div>
@@ -901,8 +920,28 @@ function desfazerPagamento(id){
 }
 
 function removerDespesa(id){
-    if(!confirm('Remover esta despesa?')) return;
-    despesas = despesas.filter(d=> d.id !== id);
+    const despesa = despesas.find(d => d.id === id);
+    if(!despesa) return;
+    
+    // Se for uma despesa com mês definido, perguntar se quer remover todas as recorrências
+    if(despesa.mes){
+        const todasRecorrentes = despesas.filter(d => d.descricao === despesa.descricao && d.valor === despesa.valor && d.mes);
+        if(todasRecorrentes.length > 1){
+            if(confirm(`Esta despesa se repete em ${todasRecorrentes.length} meses. Deseja remover TODAS as ocorrências?`)){
+                despesas = despesas.filter(d => !(d.descricao === despesa.descricao && d.valor === despesa.valor && d.mes));
+            } else {
+                if(!confirm('Remover apenas esta despesa do mês atual?')) return;
+                despesas = despesas.filter(d=> d.id !== id);
+            }
+        } else {
+            if(!confirm('Remover esta despesa?')) return;
+            despesas = despesas.filter(d=> d.id !== id);
+        }
+    } else {
+        if(!confirm('Remover esta despesa?')) return;
+        despesas = despesas.filter(d=> d.id !== id);
+    }
+    
     salvar();
     renderizarDespesas();
     atualizarSaldo();
@@ -1245,6 +1284,12 @@ function atualizarEstatisticas(){
 // INICIALIZAÇÃO
 function inicializar(){
     carregarDados();
+    
+    // Mostrar mês atual
+    const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const mesAtual = new Date().getMonth();
+    document.getElementById('mes-atual-nome').textContent = nomesMeses[mesAtual];
+    
     renderizarReceitas();
     renderizarDespesas();
     renderizarSonhos();
