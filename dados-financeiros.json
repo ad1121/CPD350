@@ -12,6 +12,13 @@
     }
   ],
   "despesas": [],
-  "sonhos": [],
-  "atualizadoEm": "2025-12-07T19:41:58.789Z"
+  "sonhos": [
+    {
+      "id": 1765136581629,
+      "titulo": "Aniversário Ana Clara",
+      "meta": 2000,
+      "atual": 10
+    }
+  ],
+  "atualizadoEm": "2025-12-07T19:43:21.952Z"
 }
