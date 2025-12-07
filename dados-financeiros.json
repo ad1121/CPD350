@@ -11,14 +11,372 @@
       "valor": 1680
     }
   ],
-  "despesas": [],
-  "sonhos": [
+  "despesas": [
     {
-      "id": 1765136581629,
-      "titulo": "Aniversário Ana Clara",
-      "meta": 2000,
-      "atual": 10
+      "id": 1765137917967,
+      "descricao": "Gasolina",
+      "valor": 300,
+      "paga": false,
+      "mes": "Abril"
+    },
+    {
+      "id": 1765137917966,
+      "descricao": "Gasolina",
+      "valor": 300,
+      "paga": false,
+      "mes": "Março"
+    },
+    {
+      "id": 1765137917965,
+      "descricao": "Gasolina",
+      "valor": 300,
+      "paga": false,
+      "mes": "Fevereiro"
+    },
+    {
+      "id": 1765137917964,
+      "descricao": "Gasolina",
+      "valor": 300,
+      "paga": false,
+      "mes": "Janeiro"
+    },
+    {
+      "id": 1765137900974,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Dezembro"
+    },
+    {
+      "id": 1765137900973,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Novembro"
+    },
+    {
+      "id": 1765137900972,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Outubro"
+    },
+    {
+      "id": 1765137900971,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Setembro"
+    },
+    {
+      "id": 1765137900970,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Agosto"
+    },
+    {
+      "id": 1765137900969,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Julho"
+    },
+    {
+      "id": 1765137900968,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Junho"
+    },
+    {
+      "id": 1765137900967,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Maio"
+    },
+    {
+      "id": 1765137900966,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Abril"
+    },
+    {
+      "id": 1765137900965,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Março"
+    },
+    {
+      "id": 1765137900964,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Fevereiro"
+    },
+    {
+      "id": 1765137900963,
+      "descricao": "Batida",
+      "valor": 200,
+      "paga": false,
+      "mes": "Janeiro"
+    },
+    {
+      "id": 1765137874684,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Dezembro"
+    },
+    {
+      "id": 1765137874683,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Novembro"
+    },
+    {
+      "id": 1765137874682,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Outubro"
+    },
+    {
+      "id": 1765137874681,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Setembro"
+    },
+    {
+      "id": 1765137874680,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Agosto"
+    },
+    {
+      "id": 1765137874679,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Julho"
+    },
+    {
+      "id": 1765137874678,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Junho"
+    },
+    {
+      "id": 1765137874677,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Maio"
+    },
+    {
+      "id": 1765137874676,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Abril"
+    },
+    {
+      "id": 1765137874675,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Março"
+    },
+    {
+      "id": 1765137874674,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Fevereiro"
+    },
+    {
+      "id": 1765137874673,
+      "descricao": "Emprestimo Damiana",
+      "valor": 470,
+      "paga": false,
+      "mes": "Janeiro"
+    },
+    {
+      "id": 1765137831389,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Dezembro"
+    },
+    {
+      "id": 1765137831388,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Novembro"
+    },
+    {
+      "id": 1765137831387,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Outubro"
+    },
+    {
+      "id": 1765137831386,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Setembro"
+    },
+    {
+      "id": 1765137831385,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Agosto"
+    },
+    {
+      "id": 1765137831384,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Julho"
+    },
+    {
+      "id": 1765137831383,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Junho"
+    },
+    {
+      "id": 1765137831382,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Maio"
+    },
+    {
+      "id": 1765137831381,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Abril"
+    },
+    {
+      "id": 1765137831380,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Março"
+    },
+    {
+      "id": 1765137831379,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Fevereiro"
+    },
+    {
+      "id": 1765137831378,
+      "descricao": "Carro",
+      "valor": 550,
+      "paga": false,
+      "mes": "Janeiro"
+    },
+    {
+      "id": 1765136679117,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Dezembro"
+    },
+    {
+      "id": 1765136679116,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Novembro"
+    },
+    {
+      "id": 1765136679115,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Outubro"
+    },
+    {
+      "id": 1765136679114,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Setembro"
+    },
+    {
+      "id": 1765136679113,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Agosto"
+    },
+    {
+      "id": 1765136679112,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Julho"
+    },
+    {
+      "id": 1765136679111,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Junho"
+    },
+    {
+      "id": 1765136679110,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Maio"
+    },
+    {
+      "id": 1765136679109,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Abril"
+    },
+    {
+      "id": 1765136679108,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Março"
+    },
+    {
+      "id": 1765136679107,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Fevereiro"
+    },
+    {
+      "id": 1765136679106,
+      "descricao": "Aluguel",
+      "valor": 600,
+      "paga": false,
+      "mes": "Janeiro"
     }
   ],
-  "atualizadoEm": "2025-12-07T19:43:21.952Z"
+  "sonhos": [],
+  "atualizadoEm": "2025-12-07T20:05:55.117Z"
 }
