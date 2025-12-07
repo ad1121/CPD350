@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Controle Financeiro</title>
+<title>Controle Financeiro Completo</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root{
     --primaria: #FF3B5C;
     --secundaria: #FFB400;
     --sucesso: #2ECC71;
+    --roxo: #9B59B6;
     --fundo: #F6F7FB;
     --texto: #222;
     --card-bg: #ffffff;
@@ -20,102 +20,182 @@ body{
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     background:var(--fundo);
     color:var(--texto);
-    padding:18px;
+    padding:24px;
     -webkit-font-smoothing:antialiased;
+    min-height:100vh;
 }
 .header{
-    background: linear-gradient(90deg,var(--primaria), #ff6b84);
+    background: linear-gradient(135deg,var(--primaria), #ff6b84);
     color:white;
-    padding:18px;
-    border-radius:12px;
+    padding:24px;
+    border-radius:16px;
     text-align:center;
     font-weight:700;
-    font-size:20px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.08);
-    margin-bottom:18px;
-    animation:fadeInDown .45s ease;
+    font-size:24px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.1);
+    margin-bottom:24px;
+    animation:fadeInDown .5s ease;
+}
+.tabs{
+    display:flex;
+    gap:12px;
+    margin-bottom:24px;
+    flex-wrap:wrap;
+}
+.tab{
+    padding:12px 24px;
+    border-radius:12px;
+    border:none;
+    background:#fff;
+    color:#666;
+    font-weight:600;
+    cursor:pointer;
+    transition:all .2s ease;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+.tab:hover{
+    transform:translateY(-2px);
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+.tab.active{
+    background:linear-gradient(135deg,var(--primaria), #ff6b84);
+    color:white;
+}
+.tab-content{
+    display:none;
+}
+.tab-content.active{
+    display:block;
+    animation:fadeInUp .4s ease;
 }
 .main{
     display:grid;
-    grid-template-columns: 1fr 380px;
-    gap:18px;
+    grid-template-columns: 1fr 400px;
+    gap:24px;
 }
-@media(max-width:920px){
+@media(max-width:1200px){
     .main{ grid-template-columns: 1fr; }
 }
 .card{
     background:var(--card-bg);
-    border-radius:12px;
-    padding:14px;
-    box-shadow:0 6px 18px rgba(8,8,8,0.06);
-    animation:fadeInUp .45s ease;
+    border-radius:16px;
+    padding:24px;
+    box-shadow:0 4px 16px rgba(8,8,8,0.06);
+    animation:fadeInUp .5s ease;
 }
 .resumo{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    padding:16px;
-    border-radius:10px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
-    align-items:center;
-    flex-wrap:wrap;
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap:16px;
+    margin-bottom:24px;
 }
-.resumo .box{ text-align:center; flex:1; min-width:100px; }
-.resumo .box small{ display:block; color:#666; font-size:12px; margin-bottom:6px; }
-.resumo .box .num{ font-weight:800; font-size:18px; }
+.resumo .box{ 
+    text-align:center; 
+    padding:20px;
+    background:linear-gradient(135deg, #fff, #f8f9fa);
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.resumo .box small{ display:block; color:#666; font-size:13px; margin-bottom:8px; font-weight:600; }
+.resumo .box .num{ font-weight:800; font-size:20px; }
 .resumo .box .num.neg{ color: #e74c3c; }
+.form-section{
+    background:#f8f9fa;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:24px;
+}
+.form-section h3{
+    margin-bottom:16px;
+    color:#333;
+    font-size:16px;
+}
 .form-row{
     display:flex;
-    gap:10px;
+    gap:12px;
     margin-bottom:12px;
     flex-wrap:wrap;
+    align-items:center;
 }
-.form-row input[type="text"]{
+.form-row input[type="text"],
+.form-row input[type="number"],
+.form-row select{
     flex:1;
-    padding:10px 12px;
-    border-radius:8px;
-    border:1px solid rgba(0,0,0,0.08);
+    min-width:150px;
+    padding:12px 14px;
+    border-radius:10px;
+    border:2px solid #e0e0e0;
     font-size:14px;
     background: #fff;
+    transition:border .2s ease;
+}
+.form-row input:focus,
+.form-row select:focus{
+    outline:none;
+    border-color:var(--primaria);
 }
 .form-row input.valor-input{
-    width:150px;
+    width:160px;
     text-align:right;
 }
+.form-row label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:14px;
+    font-weight:600;
+    white-space:nowrap;
+}
 .form-row button{
-    padding:10px 14px;
-    border-radius:8px;
+    padding:12px 20px;
+    border-radius:10px;
     border:none;
     cursor:pointer;
     font-weight:700;
+    transition:all .2s ease;
+    font-size:14px;
 }
-.btn-add-receita{ background: linear-gradient(90deg,var(--sucesso), #22b66a); color:white }
-.btn-add-despesa{ background: linear-gradient(90deg,var(--primaria), #ff6b84); color:white }
+.form-row button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+.btn-add-receita{ background: linear-gradient(135deg,var(--sucesso), #27ae60); color:white }
+.btn-add-despesa{ background: linear-gradient(135deg,var(--primaria), #e74c3c); color:white }
+.btn-add-sonho{ background: linear-gradient(135deg,var(--roxo), #8e44ad); color:white }
 .lista{
-    margin-top:8px;
+    margin-top:12px;
     display:flex;
     flex-direction:column;
-    gap:10px;
+    gap:12px;
 }
 .item{
     display:flex;
     justify-content:space-between;
     align-items:center;
     background: #fff;
-    padding:12px;
-    border-radius:10px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.04);
-    transition: transform .12s ease, box-shadow .12s ease;
+    padding:16px;
+    border-radius:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+    transition: transform .2s ease, box-shadow .2s ease;
+    border-left:4px solid var(--primaria);
 }
-.item:hover{ transform: translateY(-4px); box-shadow:0 10px 20px rgba(0,0,0,0.06); }
+.item.receita-item{
+    border-left-color:var(--sucesso);
+}
+.item:hover{ 
+    transform: translateY(-3px); 
+    box-shadow:0 6px 20px rgba(0,0,0,0.1); 
+}
 .item .meta{
     display:flex;
     flex-direction:column;
-    gap:4px;
+    gap:6px;
+    flex:1;
 }
 .item .descricao{
     font-weight:700;
     color:#222;
+    font-size:15px;
 }
 .item .sub{
     font-size:13px;
@@ -123,360 +203,518 @@ body{
 }
 .item .valor{
     font-weight:800;
-    min-width:110px;
+    min-width:120px;
     text-align:right;
     color:var(--primaria);
+    font-size:16px;
+}
+.item.receita-item .valor{
+    color:var(--sucesso);
 }
 .item.paga .valor{ color: #999 }
-.item.paga{ opacity:.6; text-decoration: line-through; }
+.item.paga{ opacity:.6; }
+.item.paga .descricao{ text-decoration: line-through; }
 .item .acoes{
     display:flex;
     gap:8px;
-    margin-left:12px;
+    margin-left:16px;
 }
 .btn-pagar{
     background:var(--primaria);
     color:white;
     border:none;
-    padding:8px 10px;
+    padding:8px 12px;
     border-radius:8px;
     cursor:pointer;
     font-weight:700;
+    font-size:13px;
+    transition:all .2s ease;
+}
+.btn-pagar:hover{
+    background:#e74c3c;
+    transform:scale(1.05);
 }
 .btn-desfazer{
     background:var(--secundaria);
     color:#222;
     border:none;
-    padding:8px 10px;
+    padding:8px 12px;
     border-radius:8px;
     cursor:pointer;
     font-weight:700;
+    font-size:13px;
 }
 .btn-remover{
     background:transparent;
-    border:1px solid rgba(0,0,0,0.06);
+    border:2px solid #e0e0e0;
     color:#777;
-    padding:8px 10px;
+    padding:8px 12px;
     border-radius:8px;
     cursor:pointer;
     font-weight:700;
+    font-size:13px;
 }
 .aside {
     display:flex;
     flex-direction:column;
-    gap:12px;
+    gap:16px;
 }
-.grafico-card{ padding:14px; border-radius:10px; background:#fff; }
-canvas{ width:100% !important; height:260px !important; }
+.grafico-card{ padding:20px; border-radius:12px; background:#fff; }
+canvas{ width:100% !important; height:300px !important; }
+.sonho-card{
+    background:#fff;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+    border-left:4px solid var(--roxo);
+}
+.sonho-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+}
+.sonho-titulo{
+    font-weight:700;
+    font-size:16px;
+    color:#333;
+}
+.sonho-meta{
+    font-weight:700;
+    color:var(--roxo);
+    font-size:14px;
+}
+.progresso-bar{
+    width:100%;
+    height:12px;
+    background:#e0e0e0;
+    border-radius:20px;
+    overflow:hidden;
+    margin:12px 0;
+}
+.progresso-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--roxo), #8e44ad);
+    border-radius:20px;
+    transition:width .3s ease;
+}
+.sonho-info{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    color:#666;
+    margin-bottom:12px;
+}
+.btn-depositar{
+    background:linear-gradient(135deg,var(--roxo), #8e44ad);
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:13px;
+    margin-right:8px;
+}
+.github-section{
+    background:#f8f9fa;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:16px;
+}
+.github-section h3{
+    margin-bottom:16px;
+    color:#333;
+}
+.github-status{
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:12px;
+    font-size:14px;
+}
+.github-status.success{
+    background:#d4edda;
+    color:#155724;
+}
+.github-status.error{
+    background:#f8d7da;
+    color:#721c24;
+}
+.github-status.info{
+    background:#d1ecf1;
+    color:#0c5460;
+}
+.btn-github{
+    background:#24292e;
+    color:white;
+    padding:12px 20px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    font-weight:700;
+    margin-right:8px;
+    margin-bottom:8px;
+    transition:all .2s ease;
+}
+.btn-github:hover{
+    background:#1a1e21;
+    transform:translateY(-2px);
+}
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+}
+.modal.show{
+    display:flex;
+}
+.modal-content{
+    background:white;
+    padding:32px;
+    border-radius:16px;
+    max-width:500px;
+    width:90%;
+    max-height:80vh;
+    overflow-y:auto;
+    animation:scaleIn .3s ease;
+}
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:24px;
+}
+.modal-header h2{
+    font-size:20px;
+    color:#333;
+}
+.btn-close{
+    background:transparent;
+    border:none;
+    font-size:28px;
+    cursor:pointer;
+    color:#999;
+    line-height:1;
+    padding:0;
+    width:32px;
+    height:32px;
+}
+.meses-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:12px;
+    margin:16px 0;
+}
+.mes-checkbox{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px;
+    border-radius:8px;
+    background:#f8f9fa;
+}
+.mes-checkbox input{
+    cursor:pointer;
+}
+.mes-checkbox label{
+    cursor:pointer;
+    font-size:14px;
+}
+@keyframes fadeInUp { from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none} }
+@keyframes fadeInDown { from{opacity:0; transform:translateY(-12px)} to{opacity:1; transform:none} }
+@keyframes scaleIn { from{opacity:0; transform:scale(0.9)} to{opacity:1; transform:scale(1)} }
 .rodape{
-    margin-top:12px;
+    margin-top:24px;
     font-size:13px;
     color:#666;
     text-align:center;
+    padding:16px;
+    background:#fff;
+    border-radius:12px;
 }
-@keyframes fadeInUp { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
-@keyframes fadeInDown { from{opacity:0; transform:translateY(-8px)} to{opacity:1; transform:none} }
 </style>
 </head>
 <body>
-<div class="header">Controle Financeiro</div>
-<div class="main">
-    <div class="card">
-        <div class="resumo" style="margin-bottom:12px">
-            <div class="box">
-                <small>Total Receitas</small>
-                <div id="totalReceitas" class="num">R$ 0,00</div>
-            </div>
-            <div class="box">
-                <small>Total Despesas</small>
-                <div id="totalDespesas" class="num">R$ 0,00</div>
-            </div>
-            <div class="box">
-                <small>Despesas Pendentes</small>
-                <div id="totalDespesasPendentes" class="num">R$ 0,00</div>
-            </div>
-            <div class="box">
-                <small>Saldo Atual</small>
-                <div id="saldoValor" class="num">R$ 0,00</div>
-            </div>
-        </div>
-        <div style="margin-bottom:10px">
-            <strong>Adicionar Receita</strong>
-            <div class="form-row" style="margin-top:8px">
-                <input id="rec-desc" type="text" placeholder="Descrição (ex: Salário)" />
-                <input id="rec-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
-                <button class="btn-add-receita" onclick="adicionarReceita()">Adicionar</button>
-            </div>
-        </div>
-        <div>
-            <strong>Receitas</strong>
-            <div id="lista-receitas" class="lista" style="margin-top:8px">
-                <div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma receita</div>
-            </div>
-        </div>
-        <hr style="margin:16px 0;border:none;border-top:1px dashed rgba(0,0,0,0.06)"/>
-        <div style="margin-bottom:10px">
-            <strong>Adicionar Despesa</strong>
-            <div class="form-row" style="margin-top:8px">
-                <input id="des-desc" type="text" placeholder="Descrição (ex: Almoço)" />
-                <input id="des-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
-                <button class="btn-add-despesa" onclick="adicionarDespesa()">Adicionar</button>
-            </div>
-        </div>
-        <div>
-            <strong>Despesas</strong>
-            <div id="lista-despesas" class="lista" style="margin-top:8px">
-                <div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma despesa</div>
-            </div>
-        </div>
-        <div class="rodape">Os lançamentos ficam salvos no seu navegador (localStorage).</div>
-    </div>
-    <aside class="aside">
-        <div class="grafico-card card">
-            <strong style="display:block;margin-bottom:10px">Distribuição</strong>
-            <canvas id="pizzaGrafico"></canvas>
-        </div>
-        <div class="card">
-            <strong>Atalhos</strong>
-            <div style="display:flex;gap:8px;margin-top:10px">
-                <button onclick="limparTudo()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#eee;font-weight:700;cursor:pointer">Limpar Tudo</button>
-                <button onclick="exportarJSON()" style="flex:1;padding:10px;border-radius:8px;border:none;background:var(--primaria);color:#fff;font-weight:700;cursor:pointer">Exportar</button>
-            </div>
-        </div>
-    </aside>
+<div class="header">💰 Controle Financeiro Completo</div>
+
+<div class="tabs">
+    <button class="tab active" onclick="mudarAba('dashboard')">📊 Dashboard</button>
+    <button class="tab" onclick="mudarAba('sonhos')">✨ Realização de Sonhos</button>
+    <button class="tab" onclick="mudarAba('configuracoes')">⚙️ Configurações</button>
 </div>
+
+<!-- ABA DASHBOARD -->
+<div id="dashboard" class="tab-content active">
+    <div class="main">
+        <div class="card">
+            <div class="resumo">
+                <div class="box">
+                    <small>Total Receitas</small>
+                    <div id="totalReceitas" class="num">R$ 0,00</div>
+                </div>
+                <div class="box">
+                    <small>Total Despesas</small>
+                    <div id="totalDespesas" class="num">R$ 0,00</div>
+                </div>
+                <div class="box">
+                    <small>Despesas Pendentes</small>
+                    <div id="totalDespesasPendentes" class="num">R$ 0,00</div>
+                </div>
+                <div class="box">
+                    <small>Saldo Atual</small>
+                    <div id="saldoValor" class="num">R$ 0,00</div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>➕ Adicionar Receita</h3>
+                <div class="form-row">
+                    <input id="rec-desc" type="text" placeholder="Descrição (ex: Salário)" />
+                    <input id="rec-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
+                    <button class="btn-add-receita" onclick="adicionarReceita()">Adicionar</button>
+                </div>
+            </div>
+            
+            <div style="margin-bottom:24px">
+                <h3 style="margin-bottom:12px">💵 Receitas</h3>
+                <div id="lista-receitas" class="lista">
+                    <div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma receita cadastrada</div>
+                </div>
+            </div>
+            
+            <hr style="margin:24px 0;border:none;border-top:2px dashed rgba(0,0,0,0.06)"/>
+            
+            <div class="form-section">
+                <h3>➖ Adicionar Despesa</h3>
+                <div class="form-row">
+                    <input id="des-desc" type="text" placeholder="Descrição (ex: Aluguel)" />
+                    <input id="des-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
+                    <label>
+                        <input type="checkbox" id="des-recorrente" />
+                        Replicar
+                    </label>
+                    <button class="btn-add-despesa" onclick="adicionarDespesa()">Adicionar</button>
+                </div>
+            </div>
+            
+            <div>
+                <h3 style="margin-bottom:12px">💳 Despesas</h3>
+                <div id="lista-despesas" class="lista">
+                    <div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma despesa cadastrada</div>
+                </div>
+            </div>
+        </div>
+        
+        <aside class="aside">
+            <div class="grafico-card card">
+                <h3 style="margin-bottom:16px">📈 Distribuição</h3>
+                <canvas id="pizzaGrafico"></canvas>
+            </div>
+            <div class="card">
+                <h3 style="margin-bottom:16px">🔧 Ações Rápidas</h3>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                    <button onclick="exportarJSON()" class="btn-github" style="width:100%">💾 Exportar JSON</button>
+                    <button onclick="limparTudo()" style="width:100%;padding:12px;border-radius:10px;border:2px solid #e0e0e0;background:#fff;font-weight:700;cursor:pointer">🗑️ Limpar Tudo</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- ABA SONHOS -->
+<div id="sonhos" class="tab-content">
+    <div class="main">
+        <div class="card">
+            <div class="form-section">
+                <h3>✨ Criar Novo Sonho</h3>
+                <div class="form-row">
+                    <input id="sonho-titulo" type="text" placeholder="Nome do sonho (ex: Viagem para Paris)" />
+                    <input id="sonho-meta" type="text" class="valor-input" placeholder="Meta: 0,00" inputmode="numeric" />
+                    <button class="btn-add-sonho" onclick="adicionarSonho()">Criar Sonho</button>
+                </div>
+            </div>
+            
+            <h3 style="margin-bottom:16px">🎯 Meus Sonhos</h3>
+            <div id="lista-sonhos">
+                <div style="padding:24px;color:#666;background:#fff;border-radius:12px;text-align:center">
+                    Nenhum sonho criado ainda. Comece a planejar seus objetivos!
+                </div>
+            </div>
+        </div>
+        
+        <aside class="aside">
+            <div class="card">
+                <h3 style="margin-bottom:12px">💡 Dica</h3>
+                <p style="color:#666;font-size:14px;line-height:1.6">
+                    Use esta seção para guardar dinheiro para objetivos específicos como viagens, 
+                    compras importantes ou reserva de emergência. Defina uma meta e faça depósitos regulares!
+                </p>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- ABA CONFIGURAÇÕES -->
+<div id="configuracoes" class="tab-content">
+    <div class="main">
+        <div class="card">
+            <div class="github-section">
+                <h3>🔄 Sincronização com GitHub</h3>
+                <div id="github-status" class="github-status info">
+                    Configure sua integração com o GitHub para salvar e acessar seus dados de qualquer dispositivo.
+                </div>
+                
+                <div class="form-row">
+                    <input id="github-token" type="password" placeholder="Token do GitHub (Personal Access Token)" style="flex:2" />
+                </div>
+                <div class="form-row">
+                    <input id="github-repo" type="text" placeholder="Usuário/Repositório (ex: seunome/financeiro)" />
+                </div>
+                <div class="form-row">
+                    <input id="github-file" type="text" value="dados-financeiros.json" placeholder="Nome do arquivo" />
+                </div>
+                
+                <div style="margin-top:16px">
+                    <button class="btn-github" onclick="salvarGitHub()">☁️ Salvar no GitHub</button>
+                    <button class="btn-github" onclick="carregarGitHub()">📥 Carregar do GitHub</button>
+                    <button class="btn-github" onclick="salvarConfigGitHub()">💾 Salvar Configurações</button>
+                </div>
+                
+                <details style="margin-top:20px;padding:16px;background:#fff;border-radius:8px">
+                    <summary style="cursor:pointer;font-weight:700;color:#666">📖 Como configurar?</summary>
+                    <ol style="margin-top:12px;padding-left:20px;color:#666;font-size:14px;line-height:1.8">
+                        <li>Acesse <a href="https://github.com/settings/tokens" target="_blank" style="color:var(--primaria)">github.com/settings/tokens</a></li>
+                        <li>Clique em "Generate new token" → "Classic"</li>
+                        <li>Dê um nome e marque a permissão "repo"</li>
+                        <li>Copie o token gerado e cole acima</li>
+                        <li>Crie um repositório privado no GitHub</li>
+                        <li>Informe o nome no formato: usuário/repositório</li>
+                    </ol>
+                </details>
+            </div>
+            
+            <div style="background:#f8f9fa;padding:20px;border-radius:12px">
+                <h3 style="margin-bottom:12px">📊 Estatísticas</h3>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+                    <div style="background:#fff;padding:16px;border-radius:8px">
+                        <small style="color:#666;display:block;margin-bottom:4px">Total de Receitas</small>
+                        <strong id="stat-receitas">0</strong>
+                    </div>
+                    <div style="background:#fff;padding:16px;border-radius:8px">
+                        <small style="color:#666;display:block;margin-bottom:4px">Total de Despesas</small>
+                        <strong id="stat-despesas">0</strong>
+                    </div>
+                    <div style="background:#fff;padding:16px;border-radius:8px">
+                        <small style="color:#666;display:block;margin-bottom:4px">Sonhos Ativos</small>
+                        <strong id="stat-sonhos">0</strong>
+                    </div>
+                    <div style="background:#fff;padding:16px;border-radius:8px">
+                        <small style="color:#666;display:block;margin-bottom:4px">Última Atualização</small>
+                        <strong id="stat-update" style="font-size:12px">-</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL RECORRÊNCIA -->
+<div id="modalRecorrencia" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🔄 Replicar Despesa</h2>
+            <button class="btn-close" onclick="fecharModal()">&times;</button>
+        </div>
+        
+        <p style="color:#666;margin-bottom:16px">Selecione os meses em que deseja replicar esta despesa:</p>
+        
+        <div class="meses-grid" id="meses-grid">
+            <div class="mes-checkbox"><input type="checkbox" id="mes-1" value="1"><label for="mes-1">Janeiro</label></div>
+            <div class="mes-checkbox"><input type="checkbox" id="mes-2" value="2"><label for="mes-2">Fevereiro</label></div>
+            <div class="mes-checkbox"><input type="checkbox" id="mes-3" value="3"><label for="mes-3">Março</label></div>
+            <div class="mes-checkbox"><input type="checkbox" id="mes-4" value="4"><label for="mes-4">Abril</label></div>
+            <div class="mes-checkbox"><input type="checkbox" id="mes-5" value="5"><label for="mes-5">Maio</label></div>
+            <div class="mes-checkbox"><input type="checkbox" id="mes-6" value="6"><label for="mes-6">Junho</label></div>
+            <div class="mes-checkbox"><input type="checkbox" id="mes-7" value="7"><label for="mes-7">Julho</label></div>
+            <div class="mes-checkbox"><input type="checkbox" id="mes-8" value="8"><label for="mes-8">Agosto</label></div>
+            <div class="mes-checkbox"><input type="checkbox" id="mes-9" value="9"><label for="mes-9">Setembro</label></div>
+            <div class="mes-checkbox"><input type="checkbox" id="mes-10" value="10"><label for="mes-10">Outubro</label></div>
+            <div class="mes-checkbox"><input type="checkbox" id="mes-11" value="11"><label for="mes-11">Novembro</label></div>
+            <div class="mes-checkbox"><input type="checkbox" id="mes-12" value="12"><label for="mes-12">Dezembro</label></div>
+        </div>
+        
+        <div style="margin-top:24px;display:flex;gap:12px">
+            <button onclick="confirmarRecorrencia()" class="btn-add-despesa" style="flex:1">Confirmar</button>
+            <button onclick="fecharModal()" style="flex:1;padding:12px;border-radius:10px;border:2px solid #e0e0e0;background:#fff;font-weight:700;cursor:pointer">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DEPOSITAR -->
+<div id="modalDepositar" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>💰 Fazer Depósito</h2>
+            <button class="btn-close" onclick="fecharModalDepositar()">&times;</button>
+        </div>
+        
+        <p style="color:#666;margin-bottom:16px">Quanto deseja depositar em <strong id="deposito-nome-sonho"></strong>?</p>
+        
+        <div class="form-row">
+            <input id="deposito-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" style="width:100%;text-align:center;font-size:20px;padding:16px" />
+        </div>
+        
+        <div style="margin-top:24px;display:flex;gap:12px">
+            <button onclick="confirmarDeposito()" class="btn-depositar" style="flex:1">Depositar</button>
+            <button onclick="fecharModalDepositar()" style="flex:1;padding:12px;border-radius:10px;border:2px solid #e0e0e0;background:#fff;font-weight:700;cursor:pointer">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div class="rodape">
+    💾 Dados salvos localmente no navegador | ☁️ Configure o GitHub para sincronizar entre dispositivos
+</div>
+
 <script>
-let receitas = JSON.parse(localStorage.getItem('minhas_receitas_v1')) || [];
-let despesas = JSON.parse(localStorage.getItem('minhas_despesas_v1')) || [];
-function salvar(){
-    localStorage.setItem('minhas_receitas_v1', JSON.stringify(receitas));
-    localStorage.setItem('minhas_despesas_v1', JSON.stringify(despesas));
+let receitas = [];
+let despesas = [];
+let sonhos = [];
+let configGitHub = {};
+let despesaRecorrente = null;
+let sonhoDeposito = null;
+
+function carregarDados(){
+    const dados = JSON.parse(localStorage.getItem('financeiro_completo_v2')) || {};
+    receitas = dados.receitas || [];
+    despesas = dados.despesas || [];
+    sonhos = dados.sonhos || [];
+    configGitHub = JSON.parse(localStorage.getItem('config_github')) || {};
+    
+    if(configGitHub.token) document.getElementById('github-token').value = configGitHub.token;
+    if(configGitHub.repo) document.getElementById('github-repo').value = configGitHub.repo;
+    if(configGitHub.file) document.getElementById('github-file').value = configGitHub.file;
 }
+
+function salvar(){
+    const dados = { receitas, despesas, sonhos, atualizadoEm: new Date().toISOString() };
+    localStorage.setItem('financeiro_completo_v2', JSON.stringify(dados));
+    atualizarEstatisticas();
+}
+
 function formatarMoeda(num){
     return num.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
 }
+
 function formatarInputValor(text){
     const onlyNums = text.replace(/\D/g,'');
     if(!onlyNums) return '';
     const n = parseInt(onlyNums,10);
-    return (n/100).toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
-}
-function strToNumber(formatted){
-    if(!formatted) return 0;
-    return parseFloat(formatted.replace(/\./g,'').replace(',','.')) || 0;
-}
-const elRecDesc = document.getElementById('rec-desc');
-const elRecVal = document.getElementById('rec-valor');
-const elDesDesc = document.getElementById('des-desc');
-const elDesVal = document.getElementById('des-valor');
-const elListaReceitas = document.getElementById('lista-receitas');
-const elListaDespesas = document.getElementById('lista-despesas');
-const elSaldoValor = document.getElementById('saldoValor');
-const elTotalReceitas = document.getElementById('totalReceitas');
-const elTotalDespesas = document.getElementById('totalDespesas');
-const elTotalDespesasPendentes = document.getElementById('totalDespesasPendentes');
-[elRecVal, elDesVal].forEach(inp=>{
-    inp.addEventListener('input', e=>{
-        e.target.value = formatarInputValor(e.target.value);
-        e.target.selectionStart = e.target.selectionEnd = e.target.value.length;
-    });
-    inp.addEventListener('keypress', e=>{
-        if(e.key === 'Enter'){
-            if(inp.id === 'rec-valor'){ adicionarReceita(); } else { adicionarDespesa(); }
-            e.preventDefault();
-            return;
-        }
-        if(e.key < '0' || e.key > '9') e.preventDefault();
-    });
-});
-function calcularTotais(){
-    const totalReceitas = receitas.reduce((s,r)=>s + r.valor, 0);
-    const totalDespesas = despesas.reduce((s,d)=>s + d.valor, 0);
-    const totalDespesasPagas = despesas.filter(d=>d.paga).reduce((s,d)=>s + d.valor, 0);
-    const totalDespesasPendentes = despesas.filter(d=>!d.paga).reduce((s,d)=>s + d.valor, 0);
-    return { totalReceitas, totalDespesas, totalDespesasPagas, totalDespesasPendentes };
-}
-function atualizarSaldo(){
-    const { totalReceitas, totalDespesas, totalDespesasPagas, totalDespesasPendentes } = calcularTotais();
-    const saldo = totalReceitas - totalDespesasPagas;
-    elSaldoValor.textContent = formatarMoeda(saldo);
-    if(saldo < 0) elSaldoValor.classList.add('neg'); else elSaldoValor.classList.remove('neg');
-    elTotalReceitas.textContent = formatarMoeda(totalReceitas);
-    elTotalDespesas.textContent = formatarMoeda(totalDespesas);
-    elTotalDespesasPendentes.textContent = formatarMoeda(totalDespesasPendentes);
-}
-function renderizarReceitas(){
-    if(receitas.length === 0){
-        elListaReceitas.innerHTML = '<div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma receita</div>';
-        return;
-    }
-    elListaReceitas.innerHTML = receitas.map(r => `
-        <div class="item" id="rec-${r.id}">
-            <div class="meta">
-                <div class="descricao">${escapeHtml(r.descricao)}</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px">
-                <div class="valor">${formatarMoeda(r.valor)}</div>
-                <div class="acoes">
-                    <button class="btn-remover" onclick="removerReceita(${r.id})" title="Remover">Rem</button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-function renderizarDespesas(){
-    if(despesas.length === 0){
-        elListaDespesas.innerHTML = '<div style="padding:12px;color:#666;background:#fff;border-radius:10px">Nenhuma despesa</div>';
-        return;
-    }
-    elListaDespesas.innerHTML = despesas.map(d => `
-        <div class="item ${d.paga ? 'paga' : ''}" id="des-${d.id}">
-            <div class="meta">
-                <div class="descricao">${escapeHtml(d.descricao)}</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px">
-                <div class="valor">${formatarMoeda(d.valor)}</div>
-                <div class="acoes">
-                    ${d.paga 
-                        ? `<button class="btn-desfazer" onclick="desfazerPagamento(${d.id})">Desfazer</button>`
-                        : `<button class="btn-pagar" onclick="pagarDespesa(${d.id})">Pagar</button>`
-                    }
-                    <button class="btn-remover" onclick="removerDespesa(${d.id})">Rem</button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-function adicionarReceita(){
-    const desc = elRecDesc.value.trim();
-    const rawVal = elRecVal.value.trim();
-    const valor = strToNumber(rawVal);
-    if(!desc || valor <= 0){
-        alert('Preencha descrição e um valor válido para a receita.');
-        return;
-    }
-    const item = { id: Date.now(), descricao: desc, valor };
-    receitas.unshift(item);
-    salvar();
-    elRecDesc.value = '';
-    elRecVal.value = '';
-    renderizarReceitas();
-    atualizarSaldo();
-    atualizarGrafico();
-}
-function adicionarDespesa(){
-    const desc = elDesDesc.value.trim();
-    const rawVal = elDesVal.value.trim();
-    const valor = strToNumber(rawVal);
-    if(!desc || valor <= 0){
-        alert('Preencha descrição e um valor válido para a despesa.');
-        return;
-    }
-    const item = { id: Date.now(), descricao: desc, valor, paga:false };
-    despesas.unshift(item);
-    salvar();
-    elDesDesc.value = '';
-    elDesVal.value = '';
-    renderizarDespesas();
-    atualizarSaldo();
-    atualizarGrafico();
-}
-function pagarDespesa(id){
-    const d = despesas.find(x=>x.id === id);
-    if(!d) return;
-    d.paga = true;
-    salvar();
-    renderizarDespesas();
-    atualizarSaldo();
-    atualizarGrafico();
-}
-function desfazerPagamento(id){
-    const d = despesas.find(x=>x.id === id);
-    if(!d) return;
-    d.paga = false;
-    salvar();
-    renderizarDespesas();
-    atualizarSaldo();
-    atualizarGrafico();
-}
-function removerReceita(id){
-    if(!confirm('Remover esta receita?')) return;
-    receitas = receitas.filter(r=> r.id !== id);
-    salvar();
-    renderizarReceitas();
-    atualizarSaldo();
-    atualizarGrafico();
-}
-function removerDespesa(id){
-    if(!confirm('Remover esta despesa?')) return;
-    despesas = despesas.filter(d=> d.id !== id);
-    salvar();
-    renderizarDespesas();
-    atualizarSaldo();
-    atualizarGrafico();
-}
-function exportarJSON(){
-    const data = { receitas, despesas, exportadoEm: new Date().toISOString() };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `controle_financeiro_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-function limparTudo(){
-    if(!confirm('Apagar todas as receitas e despesas?')) return;
-    receitas = [];
-    despesas = [];
-    salvar();
-    renderizarReceitas();
-    renderizarDespesas();
-    atualizarSaldo();
-    atualizarGrafico();
-}
-function escapeHtml(str){
-    return String(str)
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,'&#39;');
-}
-let pizzaGrafico = null;
-function atualizarGrafico(){
-    const totalReceitas = receitas.reduce((s,r)=>s + r.valor, 0);
-    const totalDespesasPagas = despesas.filter(d=>d.paga).reduce((s,d)=>s + d.valor, 0);
-    const ctx = document.getElementById('pizzaGrafico').getContext('2d');
-    const data = {
-        labels: ['Receitas', 'Despesas Pagas'],
-        datasets: [{
-            data: [totalReceitas, totalDespesasPagas],
-            backgroundColor: [ 'rgba(46,204,113,0.95)', 'rgba(255,59,92,0.95)' ],
-            hoverOffset:8,
-            borderRadius:4
-        }]
-    };
-    const options = {
-        plugins: {
-            legend: { position: 'bottom' },
-            tooltip: { callbacks: {
-                label: ctx => `${ctx.label}: ${formatarMoeda(ctx.raw)}`
-            } }
-        },
-        maintainAspectRatio: false,
-        responsive: true
-    };
-    if(pizzaGrafico) pizzaGrafico.destroy();
-    pizzaGrafico = new Chart(ctx, { type: 'pie', data, options });
-}
-function inicializar(){
-    renderizarReceitas();
-    renderizarDespesas();
-    atualizarSaldo();
-    atualizarGrafico();
-}
-inicializar();
-</script>
-</body>
-</html>
+    return (n/100).toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2
