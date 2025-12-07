@@ -763,10 +763,18 @@ const elDepositoVal = document.getElementById('deposito-valor');
 
 // FUNÇÕES DE CÁLCULO
 function calcularTotais(){
+    // Pegar mês atual
+    const mesAtual = new Date().getMonth(); // 0-11
+    const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const mesAtualNome = nomesMeses[mesAtual];
+    
+    // Filtrar apenas despesas do mês atual ou sem mês definido
+    const despesasMesAtual = despesas.filter(d => !d.mes || d.mes === mesAtualNome);
+    
     const totalReceitas = receitas.reduce((s,r)=>s + r.valor, 0);
-    const totalDespesas = despesas.reduce((s,d)=>s + d.valor, 0);
-    const totalDespesasPagas = despesas.filter(d=>d.paga).reduce((s,d)=>s + d.valor, 0);
-    const totalDespesasPendentes = despesas.filter(d=>!d.paga).reduce((s,d)=>s + d.valor, 0);
+    const totalDespesas = despesasMesAtual.reduce((s,d)=>s + d.valor, 0);
+    const totalDespesasPagas = despesasMesAtual.filter(d=>d.paga).reduce((s,d)=>s + d.valor, 0);
+    const totalDespesasPendentes = despesasMesAtual.filter(d=>!d.paga).reduce((s,d)=>s + d.valor, 0);
     return { totalReceitas, totalDespesas, totalDespesasPagas, totalDespesasPendentes };
 }
 
