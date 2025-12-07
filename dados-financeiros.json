@@ -1,0 +1,17 @@
+{
+  "receitas": [
+    {
+      "id": 1765136484895,
+      "descricao": "Alimentação",
+      "valor": 1364
+    },
+    {
+      "id": 1765136400663,
+      "descricao": "Salário",
+      "valor": 1680
+    }
+  ],
+  "despesas": [],
+  "sonhos": [],
+  "atualizadoEm": "2025-12-07T19:41:58.789Z"
+}
