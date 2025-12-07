@@ -717,4 +717,543 @@ function formatarInputValor(text){
     const onlyNums = text.replace(/\D/g,'');
     if(!onlyNums) return '';
     const n = parseInt(onlyNums,10);
-    return (n/100).toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2
+    return (n/100).toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
+}
+
+function strToNumber(formatted){
+    if(!formatted) return 0;
+    return parseFloat(formatted.replace(/\./g,'').replace(',','.')) || 0;
+}
+
+function escapeHtml(str){
+    return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+}
+
+// CONFIGURAR INPUTS
+const elRecDesc = document.getElementById('rec-desc');
+const elRecVal = document.getElementById('rec-valor');
+const elDesDesc = document.getElementById('des-desc');
+const elDesVal = document.getElementById('des-valor');
+const elDepositoVal = document.getElementById('deposito-valor');
+
+[elRecVal, elDesVal, elDepositoVal, document.getElementById('sonho-meta')].forEach(inp=>{
+    if(!inp) return;
+    inp.addEventListener('input', e=>{
+        e.target.value = formatarInputValor(e.target.value);
+        e.target.selectionStart = e.target.selectionEnd = e.target.value.length;
+    });
+    inp.addEventListener('keypress', e=>{
+        if(e.key === 'Enter'){
+            e.preventDefault();
+            return;
+        }
+        if(e.key < '0' || e.key > '9') e.preventDefault();
+    });
+});
+
+// FUNÇÕES DE CÁLCULO
+function calcularTotais(){
+    const totalReceitas = receitas.reduce((s,r)=>s + r.valor, 0);
+    const totalDespesas = despesas.reduce((s,d)=>s + d.valor, 0);
+    const totalDespesasPagas = despesas.filter(d=>d.paga).reduce((s,d)=>s + d.valor, 0);
+    const totalDespesasPendentes = despesas.filter(d=>!d.paga).reduce((s,d)=>s + d.valor, 0);
+    return { totalReceitas, totalDespesas, totalDespesasPagas, totalDespesasPendentes };
+}
+
+function atualizarSaldo(){
+    const { totalReceitas, totalDespesas, totalDespesasPagas, totalDespesasPendentes } = calcularTotais();
+    const saldo = totalReceitas - totalDespesasPagas;
+    
+    document.getElementById('saldoValor').textContent = formatarMoeda(saldo);
+    if(saldo < 0) document.getElementById('saldoValor').classList.add('neg'); 
+    else document.getElementById('saldoValor').classList.remove('neg');
+    
+    document.getElementById('totalReceitas').textContent = formatarMoeda(totalReceitas);
+    document.getElementById('totalDespesas').textContent = formatarMoeda(totalDespesas);
+    document.getElementById('totalDespesasPendentes').textContent = formatarMoeda(totalDespesasPendentes);
+}
+
+// RECEITAS
+function renderizarReceitas(){
+    const el = document.getElementById('lista-receitas');
+    if(receitas.length === 0){
+        el.innerHTML = '<div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma receita cadastrada</div>';
+        return;
+    }
+    el.innerHTML = receitas.map(r => `
+        <div class="item receita-item">
+            <div class="meta">
+                <div class="descricao">${escapeHtml(r.descricao)}</div>
+                ${r.mes ? `<div class="sub">Mês: ${r.mes}</div>` : ''}
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+                <div class="valor">${formatarMoeda(r.valor)}</div>
+                <div class="acoes">
+                    <button class="btn-remover" onclick="removerReceita(${r.id})">Remover</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function adicionarReceita(){
+    const desc = elRecDesc.value.trim();
+    const valor = strToNumber(elRecVal.value.trim());
+    if(!desc || valor <= 0){
+        alert('Preencha descrição e um valor válido para a receita.');
+        return;
+    }
+    const item = { id: Date.now(), descricao: desc, valor };
+    receitas.unshift(item);
+    salvar();
+    elRecDesc.value = '';
+    elRecVal.value = '';
+    renderizarReceitas();
+    atualizarSaldo();
+    atualizarGrafico();
+}
+
+function removerReceita(id){
+    if(!confirm('Remover esta receita?')) return;
+    receitas = receitas.filter(r=> r.id !== id);
+    salvar();
+    renderizarReceitas();
+    atualizarSaldo();
+    atualizarGrafico();
+}
+
+// DESPESAS
+function renderizarDespesas(){
+    const el = document.getElementById('lista-despesas');
+    if(despesas.length === 0){
+        el.innerHTML = '<div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma despesa cadastrada</div>';
+        return;
+    }
+    el.innerHTML = despesas.map(d => `
+        <div class="item ${d.paga ? 'paga' : ''}">
+            <div class="meta">
+                <div class="descricao">${escapeHtml(d.descricao)}</div>
+                ${d.mes ? `<div class="sub">Mês: ${d.mes}</div>` : ''}
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+                <div class="valor">${formatarMoeda(d.valor)}</div>
+                <div class="acoes">
+                    ${d.paga 
+                        ? `<button class="btn-desfazer" onclick="desfazerPagamento(${d.id})">Desfazer</button>`
+                        : `<button class="btn-pagar" onclick="pagarDespesa(${d.id})">Pagar</button>`
+                    }
+                    <button class="btn-remover" onclick="removerDespesa(${d.id})">Remover</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function adicionarDespesa(){
+    const desc = elDesDesc.value.trim();
+    const valor = strToNumber(elDesVal.value.trim());
+    const recorrente = document.getElementById('des-recorrente').checked;
+    
+    if(!desc || valor <= 0){
+        alert('Preencha descrição e um valor válido para a despesa.');
+        return;
+    }
+    
+    if(recorrente){
+        despesaRecorrente = { descricao: desc, valor };
+        document.getElementById('modalRecorrencia').classList.add('show');
+    } else {
+        const item = { id: Date.now(), descricao: desc, valor, paga:false };
+        despesas.unshift(item);
+        salvar();
+        elDesDesc.value = '';
+        elDesVal.value = '';
+        document.getElementById('des-recorrente').checked = false;
+        renderizarDespesas();
+        atualizarSaldo();
+        atualizarGrafico();
+    }
+}
+
+function pagarDespesa(id){
+    const d = despesas.find(x=>x.id === id);
+    if(!d) return;
+    d.paga = true;
+    salvar();
+    renderizarDespesas();
+    atualizarSaldo();
+    atualizarGrafico();
+}
+
+function desfazerPagamento(id){
+    const d = despesas.find(x=>x.id === id);
+    if(!d) return;
+    d.paga = false;
+    salvar();
+    renderizarDespesas();
+    atualizarSaldo();
+    atualizarGrafico();
+}
+
+function removerDespesa(id){
+    if(!confirm('Remover esta despesa?')) return;
+    despesas = despesas.filter(d=> d.id !== id);
+    salvar();
+    renderizarDespesas();
+    atualizarSaldo();
+    atualizarGrafico();
+}
+
+// RECORRÊNCIA
+function fecharModal(){
+    document.getElementById('modalRecorrencia').classList.remove('show');
+    despesaRecorrente = null;
+}
+
+function confirmarRecorrencia(){
+    if(!despesaRecorrente) return;
+    
+    const mesesSelecionados = [];
+    for(let i=1; i<=12; i++){
+        const checkbox = document.getElementById(`mes-${i}`);
+        if(checkbox.checked){
+            mesesSelecionados.push(i);
+            checkbox.checked = false;
+        }
+    }
+    
+    if(mesesSelecionados.length === 0){
+        alert('Selecione pelo menos um mês!');
+        return;
+    }
+    
+    const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    
+    mesesSelecionados.forEach(mes => {
+        const item = {
+            id: Date.now() + mes,
+            descricao: despesaRecorrente.descricao,
+            valor: despesaRecorrente.valor,
+            paga: false,
+            mes: nomesMeses[mes-1]
+        };
+        despesas.unshift(item);
+    });
+    
+    salvar();
+    elDesDesc.value = '';
+    elDesVal.value = '';
+    document.getElementById('des-recorrente').checked = false;
+    renderizarDespesas();
+    atualizarSaldo();
+    atualizarGrafico();
+    fecharModal();
+}
+
+// SONHOS
+function renderizarSonhos(){
+    const el = document.getElementById('lista-sonhos');
+    if(sonhos.length === 0){
+        el.innerHTML = '<div style="padding:24px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhum sonho criado ainda. Comece a planejar seus objetivos!</div>';
+        return;
+    }
+    
+    el.innerHTML = sonhos.map(s => {
+        const progresso = s.meta > 0 ? (s.atual / s.meta) * 100 : 0;
+        const completo = progresso >= 100;
+        
+        return `
+            <div class="sonho-card">
+                <div class="sonho-header">
+                    <div class="sonho-titulo">${completo ? '✅ ' : ''}${escapeHtml(s.titulo)}</div>
+                    <div class="sonho-meta">${formatarMoeda(s.meta)}</div>
+                </div>
+                <div class="progresso-bar">
+                    <div class="progresso-fill" style="width:${Math.min(progresso, 100)}%"></div>
+                </div>
+                <div class="sonho-info">
+                    <span>Economizado: ${formatarMoeda(s.atual)}</span>
+                    <span>Faltam: ${formatarMoeda(Math.max(0, s.meta - s.atual))}</span>
+                </div>
+                <div class="sonho-info">
+                    <span style="font-weight:700;color:var(--roxo)">${progresso.toFixed(1)}% concluído</span>
+                </div>
+                <div style="margin-top:12px">
+                    ${!completo ? `<button class="btn-depositar" onclick="abrirModalDepositar(${s.id})">Depositar</button>` : ''}
+                    <button class="btn-remover" onclick="removerSonho(${s.id})">Remover</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function adicionarSonho(){
+    const titulo = document.getElementById('sonho-titulo').value.trim();
+    const meta = strToNumber(document.getElementById('sonho-meta').value.trim());
+    
+    if(!titulo || meta <= 0){
+        alert('Preencha o nome do sonho e uma meta válida!');
+        return;
+    }
+    
+    const sonho = {
+        id: Date.now(),
+        titulo,
+        meta,
+        atual: 0
+    };
+    
+    sonhos.unshift(sonho);
+    salvar();
+    document.getElementById('sonho-titulo').value = '';
+    document.getElementById('sonho-meta').value = '';
+    renderizarSonhos();
+}
+
+function abrirModalDepositar(id){
+    sonhoDeposito = sonhos.find(s => s.id === id);
+    if(!sonhoDeposito) return;
+    
+    document.getElementById('deposito-nome-sonho').textContent = sonhoDeposito.titulo;
+    document.getElementById('deposito-valor').value = '';
+    document.getElementById('modalDepositar').classList.add('show');
+}
+
+function fecharModalDepositar(){
+    document.getElementById('modalDepositar').classList.remove('show');
+    sonhoDeposito = null;
+}
+
+function confirmarDeposito(){
+    if(!sonhoDeposito) return;
+    
+    const valor = strToNumber(document.getElementById('deposito-valor').value.trim());
+    if(valor <= 0){
+        alert('Digite um valor válido para depositar!');
+        return;
+    }
+    
+    sonhoDeposito.atual += valor;
+    salvar();
+    renderizarSonhos();
+    fecharModalDepositar();
+}
+
+function removerSonho(id){
+    if(!confirm('Remover este sonho? Todo o progresso será perdido.')) return;
+    sonhos = sonhos.filter(s => s.id !== id);
+    salvar();
+    renderizarSonhos();
+}
+
+// GRÁFICO
+let pizzaGrafico = null;
+function atualizarGrafico(){
+    const { totalReceitas, totalDespesasPagas } = calcularTotais();
+    const ctx = document.getElementById('pizzaGrafico').getContext('2d');
+    
+    const data = {
+        labels: ['Receitas', 'Despesas Pagas'],
+        datasets: [{
+            data: [totalReceitas, totalDespesasPagas],
+            backgroundColor: ['rgba(46,204,113,0.95)', 'rgba(255,59,92,0.95)'],
+            hoverOffset:8,
+            borderRadius:6
+        }]
+    };
+    
+    const options = {
+        plugins: {
+            legend: { position: 'bottom' },
+            tooltip: { 
+                callbacks: {
+                    label: ctx => `${ctx.label}: ${formatarMoeda(ctx.raw)}`
+                }
+            }
+        },
+        maintainAspectRatio: false,
+        responsive: true
+    };
+    
+    if(pizzaGrafico) pizzaGrafico.destroy();
+    pizzaGrafico = new Chart(ctx, { type: 'pie', data, options });
+}
+
+// NAVEGAÇÃO
+function mudarAba(aba){
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    event.target.classList.add('active');
+    document.getElementById(aba).classList.add('active');
+}
+
+// EXPORTAR
+function exportarJSON(){
+    const dados = { receitas, despesas, sonhos, exportadoEm: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `financeiro_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function limparTudo(){
+    if(!confirm('⚠️ Apagar TODOS os dados (receitas, despesas e sonhos)? Esta ação não pode ser desfeita!')) return;
+    receitas = [];
+    despesas = [];
+    sonhos = [];
+    salvar();
+    renderizarReceitas();
+    renderizarDespesas();
+    renderizarSonhos();
+    atualizarSaldo();
+    atualizarGrafico();
+}
+
+// GITHUB
+function salvarConfigGitHub(){
+    configGitHub = {
+        token: document.getElementById('github-token').value.trim(),
+        repo: document.getElementById('github-repo').value.trim(),
+        file: document.getElementById('github-file').value.trim() || 'dados-financeiros.json'
+    };
+    
+    if(!configGitHub.token || !configGitHub.repo){
+        mostrarStatus('Preencha o token e o repositório!', 'error');
+        return;
+    }
+    
+    localStorage.setItem('config_github', JSON.stringify(configGitHub));
+    mostrarStatus('✅ Configurações salvas com sucesso!', 'success');
+}
+
+async function salvarGitHub(){
+    if(!configGitHub.token || !configGitHub.repo){
+        mostrarStatus('Configure o GitHub primeiro!', 'error');
+        return;
+    }
+    
+    mostrarStatus('⏳ Enviando para o GitHub...', 'info');
+    
+    try {
+        const dados = { receitas, despesas, sonhos, atualizadoEm: new Date().toISOString() };
+        const conteudo = btoa(unescape(encodeURIComponent(JSON.stringify(dados, null, 2))));
+        
+        // Verificar se arquivo existe
+        let sha = null;
+        try {
+            const checkRes = await fetch(`https://api.github.com/repos/${configGitHub.repo}/contents/${configGitHub.file}`, {
+                headers: { 'Authorization': `token ${configGitHub.token}` }
+            });
+            if(checkRes.ok){
+                const checkData = await checkRes.json();
+                sha = checkData.sha;
+            }
+        } catch(e){}
+        
+        const body = {
+            message: `Atualização automática - ${new Date().toLocaleString('pt-BR')}`,
+            content: conteudo
+        };
+        if(sha) body.sha = sha;
+        
+        const res = await fetch(`https://api.github.com/repos/${configGitHub.repo}/contents/${configGitHub.file}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${configGitHub.token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+        
+        if(res.ok){
+            mostrarStatus('✅ Dados salvos no GitHub com sucesso!', 'success');
+        } else {
+            const erro = await res.json();
+            mostrarStatus(`❌ Erro: ${erro.message}`, 'error');
+        }
+    } catch(e){
+        mostrarStatus(`❌ Erro ao conectar: ${e.message}`, 'error');
+    }
+}
+
+async function carregarGitHub(){
+    if(!configGitHub.token || !configGitHub.repo){
+        mostrarStatus('Configure o GitHub primeiro!', 'error');
+        return;
+    }
+    
+    mostrarStatus('⏳ Carregando do GitHub...', 'info');
+    
+    try {
+        const res = await fetch(`https://api.github.com/repos/${configGitHub.repo}/contents/${configGitHub.file}`, {
+            headers: { 'Authorization': `token ${configGitHub.token}` }
+        });
+        
+        if(!res.ok){
+            mostrarStatus('❌ Arquivo não encontrado no GitHub', 'error');
+            return;
+        }
+        
+        const data = await res.json();
+        const conteudo = decodeURIComponent(escape(atob(data.content)));
+        const dados = JSON.parse(conteudo);
+        
+        if(confirm('⚠️ Isso vai substituir seus dados locais. Continuar?')){
+            receitas = dados.receitas || [];
+            despesas = dados.despesas || [];
+            sonhos = dados.sonhos || [];
+            salvar();
+            renderizarReceitas();
+            renderizarDespesas();
+            renderizarSonhos();
+            atualizarSaldo();
+            atualizarGrafico();
+            mostrarStatus('✅ Dados carregados com sucesso!', 'success');
+        }
+    } catch(e){
+        mostrarStatus(`❌ Erro: ${e.message}`, 'error');
+    }
+}
+
+function mostrarStatus(msg, tipo){
+    const el = document.getElementById('github-status');
+    el.textContent = msg;
+    el.className = `github-status ${tipo}`;
+}
+
+function atualizarEstatisticas(){
+    document.getElementById('stat-receitas').textContent = receitas.length;
+    document.getElementById('stat-despesas').textContent = despesas.length;
+    document.getElementById('stat-sonhos').textContent = sonhos.length;
+    
+    const dados = JSON.parse(localStorage.getItem('financeiro_completo_v2'));
+    if(dados && dados.atualizadoEm){
+        const data = new Date(dados.atualizadoEm);
+        document.getElementById('stat-update').textContent = data.toLocaleString('pt-BR');
+    }
+}
+
+// INICIALIZAÇÃO
+function inicializar(){
+    carregarDados();
+    renderizarReceitas();
+    renderizarDespesas();
+    renderizarSonhos();
+    atualizarSaldo();
+    atualizarGrafico();
+    atualizarEstatisticas();
+}
+
+inicializar();
+</script>
+</body>
+</html>
