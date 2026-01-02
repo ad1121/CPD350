@@ -13,183 +13,16 @@
   ],
   "despesas": [
     {
-      "id": 1765138503306,
-      "descricao": "IPVA",
-      "valor": 100,
+      "id": 1767360491027,
+      "descricao": "D&E",
+      "valor": 400,
       "paga": true
     },
     {
-      "id": 1765138471586,
-      "descricao": "Gasolina",
-      "valor": 350,
+      "id": 1767360473110,
+      "descricao": "W",
+      "valor": 400,
       "paga": true
-    },
-    {
-      "id": 1765138450335,
-      "descricao": "Adrielly",
-      "valor": 100,
-      "paga": true
-    },
-    {
-      "id": 1765138415285,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": true,
-      "mes": "Dezembro"
-    },
-    {
-      "id": 1765138415282,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Setembro"
-    },
-    {
-      "id": 1765138415281,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Agosto"
-    },
-    {
-      "id": 1765138415280,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Julho"
-    },
-    {
-      "id": 1765138415279,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Junho"
-    },
-    {
-      "id": 1765138415278,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Maio"
-    },
-    {
-      "id": 1765138415277,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Abril"
-    },
-    {
-      "id": 1765138415276,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Março"
-    },
-    {
-      "id": 1765138415275,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Fevereiro"
-    },
-    {
-      "id": 1765138415274,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Janeiro"
-    },
-    {
-      "id": 1765138379380,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Setembro"
-    },
-    {
-      "id": 1765138379379,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Agosto"
-    },
-    {
-      "id": 1765138379378,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Julho"
-    },
-    {
-      "id": 1765138379377,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Junho"
-    },
-    {
-      "id": 1765138379376,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Maio"
-    },
-    {
-      "id": 1765138379375,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Abril"
-    },
-    {
-      "id": 1765138379374,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Março"
-    },
-    {
-      "id": 1765138379373,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Fevereiro"
-    },
-    {
-      "id": 1765138379372,
-      "descricao": "Computador",
-      "valor": 110,
-      "paga": false,
-      "mes": "Janeiro"
-    },
-    {
-      "id": 1765137917967,
-      "descricao": "Gasolina",
-      "valor": 300,
-      "paga": false,
-      "mes": "Abril"
-    },
-    {
-      "id": 1765137917966,
-      "descricao": "Gasolina",
-      "valor": 300,
-      "paga": false,
-      "mes": "Março"
-    },
-    {
-      "id": 1765137917965,
-      "descricao": "Gasolina",
-      "valor": 300,
-      "paga": false,
-      "mes": "Fevereiro"
-    },
-    {
-      "id": 1765137917964,
-      "descricao": "Gasolina",
-      "valor": 300,
-      "paga": false,
-      "mes": "Janeiro"
     },
     {
       "id": 1765137900974,
@@ -272,91 +105,7 @@
       "id": 1765137900963,
       "descricao": "Batida",
       "valor": 200,
-      "paga": false,
-      "mes": "Janeiro"
-    },
-    {
-      "id": 1765137874684,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
       "paga": true,
-      "mes": "Dezembro"
-    },
-    {
-      "id": 1765137874683,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
-      "paga": false,
-      "mes": "Novembro"
-    },
-    {
-      "id": 1765137874682,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
-      "paga": false,
-      "mes": "Outubro"
-    },
-    {
-      "id": 1765137874681,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
-      "paga": false,
-      "mes": "Setembro"
-    },
-    {
-      "id": 1765137874680,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
-      "paga": false,
-      "mes": "Agosto"
-    },
-    {
-      "id": 1765137874679,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
-      "paga": false,
-      "mes": "Julho"
-    },
-    {
-      "id": 1765137874678,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
-      "paga": false,
-      "mes": "Junho"
-    },
-    {
-      "id": 1765137874677,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
-      "paga": false,
-      "mes": "Maio"
-    },
-    {
-      "id": 1765137874676,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
-      "paga": false,
-      "mes": "Abril"
-    },
-    {
-      "id": 1765137874675,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
-      "paga": false,
-      "mes": "Março"
-    },
-    {
-      "id": 1765137874674,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
-      "paga": false,
-      "mes": "Fevereiro"
-    },
-    {
-      "id": 1765137874673,
-      "descricao": "Emprestimo Damiana",
-      "valor": 470,
-      "paga": false,
       "mes": "Janeiro"
     },
     {
@@ -440,7 +189,7 @@
       "id": 1765137831378,
       "descricao": "Carro",
       "valor": 550,
-      "paga": false,
+      "paga": true,
       "mes": "Janeiro"
     },
     {
@@ -524,7 +273,7 @@
       "id": 1765136679106,
       "descricao": "Aluguel",
       "valor": 600,
-      "paga": false,
+      "paga": true,
       "mes": "Janeiro"
     }
   ],
@@ -536,5 +285,5 @@
       "atual": 0
     }
   ],
-  "atualizadoEm": "2025-12-07T20:15:52.541Z"
+  "atualizadoEm": "2026-01-02T13:28:55.029Z"
 }
