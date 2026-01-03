@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Controle Financeiro Completo</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -20,31 +21,44 @@ body{
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     background:var(--fundo);
     color:var(--texto);
-    padding:24px;
+    padding:16px;
     -webkit-font-smoothing:antialiased;
     min-height:100vh;
+}
+@media(max-width:768px){
+    body{ padding:8px; }
 }
 .header{
     background: linear-gradient(135deg,var(--primaria), #ff6b84);
     color:white;
-    padding:24px;
-    border-radius:16px;
+    padding:20px 16px;
+    border-radius:12px;
     text-align:center;
     font-weight:700;
-    font-size:24px;
+    font-size:20px;
     box-shadow:0 8px 24px rgba(0,0,0,0.1);
-    margin-bottom:24px;
+    margin-bottom:16px;
     animation:fadeInDown .5s ease;
+}
+@media(max-width:768px){
+    .header{ 
+        font-size:18px; 
+        padding:16px 12px;
+        margin-bottom:12px;
+        border-radius:10px;
+    }
 }
 .tabs{
     display:flex;
-    gap:12px;
-    margin-bottom:24px;
+    gap:8px;
+    margin-bottom:16px;
     flex-wrap:wrap;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
 }
 .tab{
-    padding:12px 24px;
-    border-radius:12px;
+    padding:10px 16px;
+    border-radius:10px;
     border:none;
     background:#fff;
     color:#666;
@@ -52,6 +66,14 @@ body{
     cursor:pointer;
     transition:all .2s ease;
     box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    white-space:nowrap;
+    font-size:14px;
+}
+@media(max-width:768px){
+    .tab{ 
+        padding:10px 14px;
+        font-size:13px;
+    }
 }
 .tab:hover{
     transform:translateY(-2px);
@@ -70,64 +92,114 @@ body{
 }
 .main{
     display:grid;
-    grid-template-columns: 1fr 400px;
-    gap:24px;
+    grid-template-columns: 1fr;
+    gap:16px;
 }
-@media(max-width:1200px){
-    .main{ grid-template-columns: 1fr; }
+@media(min-width:1024px){
+    .main{ 
+        grid-template-columns: 1fr 400px;
+        gap:24px;
+    }
 }
 .card{
     background:var(--card-bg);
-    border-radius:16px;
-    padding:24px;
+    border-radius:12px;
+    padding:16px;
     box-shadow:0 4px 16px rgba(8,8,8,0.06);
     animation:fadeInUp .5s ease;
 }
+@media(min-width:768px){
+    .card{ padding:20px; }
+}
 .resumo{
     display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap:16px;
-    margin-bottom:24px;
+    grid-template-columns: repeat(2, 1fr);
+    gap:10px;
+    margin-bottom:16px;
+}
+@media(min-width:768px){
+    .resumo{
+        grid-template-columns: repeat(4, 1fr);
+        gap:16px;
+        margin-bottom:20px;
+    }
 }
 .resumo .box{ 
     text-align:center; 
-    padding:20px;
+    padding:14px 10px;
     background:linear-gradient(135deg, #fff, #f8f9fa);
-    border-radius:12px;
+    border-radius:10px;
     box-shadow:0 2px 8px rgba(0,0,0,0.04);
 }
-.resumo .box small{ display:block; color:#666; font-size:13px; margin-bottom:8px; font-weight:600; }
-.resumo .box .num{ font-weight:800; font-size:20px; }
+@media(min-width:768px){
+    .resumo .box{ padding:18px; }
+}
+.resumo .box small{ 
+    display:block; 
+    color:#666; 
+    font-size:11px; 
+    margin-bottom:6px; 
+    font-weight:600; 
+}
+@media(min-width:768px){
+    .resumo .box small{ font-size:13px; }
+}
+.resumo .box .num{ 
+    font-weight:800; 
+    font-size:16px; 
+}
+@media(min-width:768px){
+    .resumo .box .num{ font-size:20px; }
+}
 .resumo .box .num.neg{ color: #e74c3c; }
 .form-section{
     background:#f8f9fa;
-    padding:20px;
-    border-radius:12px;
-    margin-bottom:24px;
+    padding:14px;
+    border-radius:10px;
+    margin-bottom:16px;
+}
+@media(min-width:768px){
+    .form-section{ padding:18px; }
 }
 .form-section h3{
-    margin-bottom:16px;
+    margin-bottom:12px;
     color:#333;
-    font-size:16px;
+    font-size:15px;
+}
+@media(min-width:768px){
+    .form-section h3{ font-size:16px; }
 }
 .form-row{
     display:flex;
-    gap:12px;
-    margin-bottom:12px;
+    gap:8px;
+    margin-bottom:10px;
     flex-wrap:wrap;
     align-items:center;
 }
+@media(min-width:768px){
+    .form-row{ gap:12px; }
+}
 .form-row input[type="text"],
 .form-row input[type="number"],
+.form-row input[type="password"],
 .form-row select{
     flex:1;
-    min-width:150px;
-    padding:12px 14px;
-    border-radius:10px;
+    min-width:120px;
+    padding:10px 12px;
+    border-radius:8px;
     border:2px solid #e0e0e0;
     font-size:14px;
     background: #fff;
     transition:border .2s ease;
+}
+@media(min-width:768px){
+    .form-row input[type="text"],
+    .form-row input[type="number"],
+    .form-row input[type="password"],
+    .form-row select{
+        padding:12px 14px;
+        border-radius:10px;
+    }
 }
 .form-row input:focus,
 .form-row select:focus{
@@ -135,29 +207,47 @@ body{
     border-color:var(--primaria);
 }
 .form-row input.valor-input{
-    width:160px;
+    width:140px;
     text-align:right;
+}
+@media(min-width:768px){
+    .form-row input.valor-input{ width:160px; }
 }
 .form-row label{
     display:flex;
     align-items:center;
-    gap:8px;
-    font-size:14px;
+    gap:6px;
+    font-size:13px;
     font-weight:600;
     white-space:nowrap;
 }
+@media(min-width:768px){
+    .form-row label{ font-size:14px; }
+}
 .form-row button{
-    padding:12px 20px;
-    border-radius:10px;
+    padding:10px 16px;
+    border-radius:8px;
     border:none;
     cursor:pointer;
     font-weight:700;
     transition:all .2s ease;
-    font-size:14px;
+    font-size:13px;
 }
-.form-row button:hover{
-    transform:translateY(-2px);
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+@media(min-width:768px){
+    .form-row button{
+        padding:12px 20px;
+        border-radius:10px;
+        font-size:14px;
+    }
+}
+.form-row button:active{
+    transform:scale(0.95);
+}
+@media(min-width:768px){
+    .form-row button:hover{
+        transform:translateY(-2px);
+        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    }
 }
 .btn-add-receita{ background: linear-gradient(135deg,var(--sucesso), #27ae60); color:white }
 .btn-add-despesa{ background: linear-gradient(135deg,var(--primaria), #e74c3c); color:white }
@@ -166,47 +256,72 @@ body{
     margin-top:12px;
     display:flex;
     flex-direction:column;
-    gap:12px;
+    gap:10px;
 }
 .item{
     display:flex;
     justify-content:space-between;
     align-items:center;
     background: #fff;
-    padding:16px;
-    border-radius:12px;
+    padding:12px;
+    border-radius:10px;
     box-shadow:0 2px 10px rgba(0,0,0,0.05);
     transition: transform .2s ease, box-shadow .2s ease;
     border-left:4px solid var(--primaria);
+    flex-wrap:wrap;
+    gap:8px;
+}
+@media(min-width:768px){
+    .item{
+        padding:16px;
+        border-radius:12px;
+        flex-wrap:nowrap;
+    }
 }
 .item.receita-item{
     border-left-color:var(--sucesso);
 }
-.item:hover{ 
-    transform: translateY(-3px); 
-    box-shadow:0 6px 20px rgba(0,0,0,0.1); 
+@media(min-width:768px){
+    .item:hover{ 
+        transform: translateY(-3px); 
+        box-shadow:0 6px 20px rgba(0,0,0,0.1); 
+    }
 }
 .item .meta{
     display:flex;
     flex-direction:column;
-    gap:6px;
+    gap:4px;
     flex:1;
+    min-width:0;
 }
 .item .descricao{
     font-weight:700;
     color:#222;
-    font-size:15px;
+    font-size:14px;
+    word-break:break-word;
+}
+@media(min-width:768px){
+    .item .descricao{ font-size:15px; }
 }
 .item .sub{
-    font-size:13px;
+    font-size:12px;
     color:#666;
+}
+@media(min-width:768px){
+    .item .sub{ font-size:13px; }
 }
 .item .valor{
     font-weight:800;
-    min-width:120px;
+    min-width:100px;
     text-align:right;
     color:var(--primaria);
-    font-size:16px;
+    font-size:15px;
+}
+@media(min-width:768px){
+    .item .valor{
+        min-width:120px;
+        font-size:16px;
+    }
 }
 .item.receita-item .valor{
     color:var(--sucesso);
@@ -216,82 +331,143 @@ body{
 .item.paga .descricao{ text-decoration: line-through; }
 .item .acoes{
     display:flex;
-    gap:8px;
-    margin-left:16px;
+    gap:6px;
+    flex-wrap:wrap;
+    width:100%;
+    margin-top:4px;
+}
+@media(min-width:768px){
+    .item .acoes{
+        width:auto;
+        margin-top:0;
+        margin-left:12px;
+        gap:8px;
+    }
+}
+.btn-pagar,
+.btn-desfazer,
+.btn-remover{
+    border:none;
+    padding:8px 12px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:12px;
+    transition:all .2s ease;
+    flex:1;
+}
+@media(min-width:768px){
+    .btn-pagar,
+    .btn-desfazer,
+    .btn-remover{
+        padding:8px 12px;
+        border-radius:8px;
+        font-size:13px;
+        flex:initial;
+    }
 }
 .btn-pagar{
     background:var(--primaria);
     color:white;
-    border:none;
-    padding:8px 12px;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:700;
-    font-size:13px;
-    transition:all .2s ease;
 }
-.btn-pagar:hover{
+.btn-pagar:active{
     background:#e74c3c;
-    transform:scale(1.05);
+}
+@media(min-width:768px){
+    .btn-pagar:hover{
+        background:#e74c3c;
+        transform:scale(1.05);
+    }
 }
 .btn-desfazer{
     background:var(--secundaria);
     color:#222;
-    border:none;
-    padding:8px 12px;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:700;
-    font-size:13px;
 }
 .btn-remover{
     background:transparent;
     border:2px solid #e0e0e0;
     color:#777;
-    padding:8px 12px;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:700;
-    font-size:13px;
 }
 .aside {
     display:flex;
     flex-direction:column;
     gap:16px;
 }
-.grafico-card{ padding:20px; border-radius:12px; background:#fff; }
-canvas{ width:100% !important; height:300px !important; }
+.grafico-card{ 
+    padding:16px; 
+    border-radius:12px; 
+    background:#fff; 
+}
+@media(min-width:768px){
+    .grafico-card{ padding:20px; }
+}
+canvas{ 
+    width:100% !important; 
+    height:250px !important; 
+}
+@media(min-width:768px){
+    canvas{ height:300px !important; }
+}
 .sonho-card{
     background:#fff;
-    border-radius:12px;
-    padding:20px;
-    margin-bottom:16px;
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:12px;
     box-shadow:0 2px 10px rgba(0,0,0,0.05);
     border-left:4px solid var(--roxo);
+}
+@media(min-width:768px){
+    .sonho-card{
+        border-radius:12px;
+        padding:18px;
+        margin-bottom:16px;
+    }
 }
 .sonho-header{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:12px;
+    margin-bottom:10px;
+    gap:8px;
+    flex-wrap:wrap;
+}
+@media(min-width:768px){
+    .sonho-header{
+        margin-bottom:12px;
+        flex-wrap:nowrap;
+    }
 }
 .sonho-titulo{
     font-weight:700;
-    font-size:16px;
+    font-size:15px;
     color:#333;
+    word-break:break-word;
+}
+@media(min-width:768px){
+    .sonho-titulo{ font-size:16px; }
 }
 .sonho-meta{
     font-weight:700;
     color:var(--roxo);
-    font-size:14px;
+    font-size:13px;
+    white-space:nowrap;
+}
+@media(min-width:768px){
+    .sonho-meta{ font-size:14px; }
 }
 .progresso-bar{
     width:100%;
-    height:12px;
+    height:10px;
     background:#e0e0e0;
     border-radius:20px;
     overflow:hidden;
-    margin:12px 0;
+    margin:10px 0;
+}
+@media(min-width:768px){
+    .progresso-bar{
+        height:12px;
+        margin:12px 0;
+    }
 }
 .progresso-fill{
     height:100%;
@@ -302,36 +478,75 @@ canvas{ width:100% !important; height:300px !important; }
 .sonho-info{
     display:flex;
     justify-content:space-between;
-    font-size:13px;
+    font-size:12px;
     color:#666;
-    margin-bottom:12px;
+    margin-bottom:10px;
+    gap:8px;
+    flex-wrap:wrap;
+}
+@media(min-width:768px){
+    .sonho-info{
+        font-size:13px;
+        margin-bottom:12px;
+    }
 }
 .btn-depositar{
     background:linear-gradient(135deg,var(--roxo), #8e44ad);
     color:white;
     border:none;
-    padding:10px 16px;
-    border-radius:8px;
+    padding:10px 14px;
+    border-radius:6px;
     cursor:pointer;
     font-weight:700;
-    font-size:13px;
-    margin-right:8px;
+    font-size:12px;
+    margin-right:6px;
+    margin-bottom:6px;
+}
+@media(min-width:768px){
+    .btn-depositar{
+        padding:10px 16px;
+        border-radius:8px;
+        font-size:13px;
+        margin-right:8px;
+    }
 }
 .github-section{
     background:#f8f9fa;
-    padding:20px;
-    border-radius:12px;
-    margin-bottom:16px;
+    padding:14px;
+    border-radius:10px;
+    margin-bottom:12px;
+}
+@media(min-width:768px){
+    .github-section{
+        padding:18px;
+        border-radius:12px;
+        margin-bottom:16px;
+    }
 }
 .github-section h3{
-    margin-bottom:16px;
+    margin-bottom:12px;
     color:#333;
+    font-size:15px;
+}
+@media(min-width:768px){
+    .github-section h3{
+        margin-bottom:16px;
+        font-size:16px;
+    }
 }
 .github-status{
-    padding:12px;
-    border-radius:8px;
-    margin-bottom:12px;
-    font-size:14px;
+    padding:10px;
+    border-radius:6px;
+    margin-bottom:10px;
+    font-size:13px;
+}
+@media(min-width:768px){
+    .github-status{
+        padding:12px;
+        border-radius:8px;
+        margin-bottom:12px;
+        font-size:14px;
+    }
 }
 .github-status.success{
     background:#d4edda;
@@ -348,18 +563,33 @@ canvas{ width:100% !important; height:300px !important; }
 .btn-github{
     background:#24292e;
     color:white;
-    padding:12px 20px;
-    border-radius:10px;
+    padding:10px 16px;
+    border-radius:8px;
     border:none;
     cursor:pointer;
     font-weight:700;
-    margin-right:8px;
-    margin-bottom:8px;
+    margin-right:6px;
+    margin-bottom:6px;
     transition:all .2s ease;
+    font-size:12px;
 }
-.btn-github:hover{
+@media(min-width:768px){
+    .btn-github{
+        padding:12px 20px;
+        border-radius:10px;
+        margin-right:8px;
+        margin-bottom:8px;
+        font-size:14px;
+    }
+}
+.btn-github:active{
     background:#1a1e21;
-    transform:translateY(-2px);
+}
+@media(min-width:768px){
+    .btn-github:hover{
+        background:#1a1e21;
+        transform:translateY(-2px);
+    }
 }
 .modal{
     display:none;
@@ -372,73 +602,118 @@ canvas{ width:100% !important; height:300px !important; }
     z-index:1000;
     align-items:center;
     justify-content:center;
+    padding:16px;
 }
 .modal.show{
     display:flex;
 }
 .modal-content{
     background:white;
-    padding:32px;
-    border-radius:16px;
+    padding:20px;
+    border-radius:12px;
     max-width:500px;
-    width:90%;
-    max-height:80vh;
+    width:100%;
+    max-height:85vh;
     overflow-y:auto;
     animation:scaleIn .3s ease;
+}
+@media(min-width:768px){
+    .modal-content{
+        padding:28px;
+        border-radius:16px;
+        max-height:80vh;
+    }
 }
 .modal-header{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:24px;
+    margin-bottom:16px;
+}
+@media(min-width:768px){
+    .modal-header{ margin-bottom:20px; }
 }
 .modal-header h2{
-    font-size:20px;
+    font-size:18px;
     color:#333;
+}
+@media(min-width:768px){
+    .modal-header h2{ font-size:20px; }
 }
 .btn-close{
     background:transparent;
     border:none;
-    font-size:28px;
+    font-size:24px;
     cursor:pointer;
     color:#999;
     line-height:1;
     padding:0;
-    width:32px;
-    height:32px;
+    width:28px;
+    height:28px;
+}
+@media(min-width:768px){
+    .btn-close{
+        font-size:28px;
+        width:32px;
+        height:32px;
+    }
 }
 .meses-grid{
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:12px;
-    margin:16px 0;
+    grid-template-columns:repeat(2, 1fr);
+    gap:8px;
+    margin:12px 0;
+}
+@media(min-width:768px){
+    .meses-grid{
+        grid-template-columns:repeat(3, 1fr);
+        gap:12px;
+        margin:16px 0;
+    }
 }
 .mes-checkbox{
     display:flex;
     align-items:center;
-    gap:8px;
+    gap:6px;
     padding:8px;
-    border-radius:8px;
+    border-radius:6px;
     background:#f8f9fa;
+}
+@media(min-width:768px){
+    .mes-checkbox{
+        gap:8px;
+        border-radius:8px;
+    }
 }
 .mes-checkbox input{
     cursor:pointer;
 }
 .mes-checkbox label{
     cursor:pointer;
-    font-size:14px;
+    font-size:13px;
+}
+@media(min-width:768px){
+    .mes-checkbox label{ font-size:14px; }
 }
 @keyframes fadeInUp { from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none} }
 @keyframes fadeInDown { from{opacity:0; transform:translateY(-12px)} to{opacity:1; transform:none} }
 @keyframes scaleIn { from{opacity:0; transform:scale(0.9)} to{opacity:1; transform:scale(1)} }
 .rodape{
-    margin-top:24px;
-    font-size:13px;
+    margin-top:16px;
+    font-size:12px;
     color:#666;
     text-align:center;
-    padding:16px;
+    padding:12px;
     background:#fff;
-    border-radius:12px;
+    border-radius:10px;
+}
+@media(min-width:768px){
+    .rodape{
+        margin-top:20px;
+        font-size:13px;
+        padding:14px;
+        border-radius:12px;
+    }
 }
 </style>
 </head>
@@ -447,8 +722,8 @@ canvas{ width:100% !important; height:300px !important; }
 
 <div class="tabs">
     <button class="tab active" onclick="mudarAba('dashboard')">📊 Dashboard</button>
-    <button class="tab" onclick="mudarAba('sonhos')">✨ Realização de Sonhos</button>
-    <button class="tab" onclick="mudarAba('configuracoes')">⚙️ Configurações</button>
+    <button class="tab" onclick="mudarAba('sonhos')">✨ Sonhos</button>
+    <button class="tab" onclick="mudarAba('configuracoes')">⚙️ Config</button>
 </div>
 
 <!-- ABA DASHBOARD -->
@@ -479,55 +754,59 @@ canvas{ width:100% !important; height:300px !important; }
                 <div class="form-row">
                     <input id="rec-desc" type="text" placeholder="Descrição (ex: Salário)" />
                     <input id="rec-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
-                    <button class="btn-add-receita" onclick="adicionarReceita()">Adicionar</button>
+                </div>
+                <div class="form-row">
+                    <button class="btn-add-receita" onclick="adicionarReceita()" style="width:100%">Adicionar</button>
                 </div>
             </div>
             
-            <div style="margin-bottom:24px">
-                <h3 style="margin-bottom:12px">💵 Receitas</h3>
+            <div style="margin-bottom:20px">
+                <h3 style="margin-bottom:12px;font-size:15px">💵 Receitas</h3>
                 <div id="lista-receitas" class="lista">
-                    <div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma receita cadastrada</div>
+                    <div style="padding:16px;color:#666;background:#fff;border-radius:10px;text-align:center;font-size:13px">Nenhuma receita cadastrada</div>
                 </div>
             </div>
             
-            <hr style="margin:24px 0;border:none;border-top:2px dashed rgba(0,0,0,0.06)"/>
+            <hr style="margin:20px 0;border:none;border-top:2px dashed rgba(0,0,0,0.06)"/>
             
             <div class="form-section">
                 <h3>➖ Adicionar Despesa</h3>
                 <div class="form-row">
                     <input id="des-desc" type="text" placeholder="Descrição (ex: Aluguel)" />
                     <input id="des-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" />
-                    <label>
+                </div>
+                <div class="form-row">
+                    <label style="flex:1">
                         <input type="checkbox" id="des-recorrente" />
                         Replicar
                     </label>
-                    <button class="btn-add-despesa" onclick="adicionarDespesa()">Adicionar</button>
+                    <button class="btn-add-despesa" onclick="adicionarDespesa()" style="flex:2">Adicionar</button>
                 </div>
             </div>
             
-            <div style="margin-bottom:24px">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-                    <h3 style="margin:0">💳 Despesas</h3>
-                    <span style="font-size:13px;color:#666;background:#f8f9fa;padding:6px 12px;border-radius:8px">
-                        📅 Exibindo: <strong id="mes-atual-nome"></strong>
+            <div style="margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;flex-wrap:wrap">
+                    <h3 style="margin:0;font-size:15px">💳 Despesas</h3>
+                    <span style="font-size:12px;color:#666;background:#f8f9fa;padding:6px 10px;border-radius:6px">
+                        📅 <strong id="mes-atual-nome"></strong>
                     </span>
                 </div>
                 <div id="lista-despesas" class="lista">
-                    <div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma despesa cadastrada</div>
+                    <div style="padding:16px;color:#666;background:#fff;border-radius:10px;text-align:center;font-size:13px">Nenhuma despesa cadastrada</div>
                 </div>
             </div>
         </div>
         
         <aside class="aside">
             <div class="grafico-card card">
-                <h3 style="margin-bottom:16px">📈 Distribuição</h3>
+                <h3 style="margin-bottom:12px;font-size:15px">📈 Distribuição</h3>
                 <canvas id="pizzaGrafico"></canvas>
             </div>
             <div class="card">
-                <h3 style="margin-bottom:16px">🔧 Ações Rápidas</h3>
-                <div style="display:flex;flex-direction:column;gap:10px">
+                <h3 style="margin-bottom:12px;font-size:15px">🔧 Ações Rápidas</h3>
+                <div style="display:flex;flex-direction:column;gap:8px">
                     <button onclick="exportarJSON()" class="btn-github" style="width:100%">💾 Exportar JSON</button>
-                    <button onclick="limparTudo()" style="width:100%;padding:12px;border-radius:10px;border:2px solid #e0e0e0;background:#fff;font-weight:700;cursor:pointer">🗑️ Limpar Tudo</button>
+                    <button onclick="limparTudo()" style="width:100%;padding:10px;border-radius:8px;border:2px solid #e0e0e0;background:#fff;font-weight:700;cursor:pointer;font-size:13px">🗑️ Limpar Tudo</button>
                 </div>
             </div>
         </aside>
@@ -541,15 +820,17 @@ canvas{ width:100% !important; height:300px !important; }
             <div class="form-section">
                 <h3>✨ Criar Novo Sonho</h3>
                 <div class="form-row">
-                    <input id="sonho-titulo" type="text" placeholder="Nome do sonho (ex: Viagem para Paris)" />
+                    <input id="sonho-titulo" type="text" placeholder="Nome do sonho (ex: Viagem)" style="flex:2" />
                     <input id="sonho-meta" type="text" class="valor-input" placeholder="Meta: 0,00" inputmode="numeric" />
-                    <button class="btn-add-sonho" onclick="adicionarSonho()">Criar Sonho</button>
+                </div>
+                <div class="form-row">
+                    <button class="btn-add-sonho" onclick="adicionarSonho()" style="width:100%">Criar Sonho</button>
                 </div>
             </div>
             
-            <h3 style="margin-bottom:16px">🎯 Meus Sonhos</h3>
+            <h3 style="margin-bottom:12px;font-size:15px">🎯 Meus Sonhos</h3>
             <div id="lista-sonhos">
-                <div style="padding:24px;color:#666;background:#fff;border-radius:12px;text-align:center">
+                <div style="padding:20px;color:#666;background:#fff;border-radius:10px;text-align:center;font-size:13px">
                     Nenhum sonho criado ainda. Comece a planejar seus objetivos!
                 </div>
             </div>
@@ -557,8 +838,8 @@ canvas{ width:100% !important; height:300px !important; }
         
         <aside class="aside">
             <div class="card">
-                <h3 style="margin-bottom:12px">💡 Dica</h3>
-                <p style="color:#666;font-size:14px;line-height:1.6">
+                <h3 style="margin-bottom:10px;font-size:15px">💡 Dica</h3>
+                <p style="color:#666;font-size:13px;line-height:1.6">
                     Use esta seção para guardar dinheiro para objetivos específicos como viagens, 
                     compras importantes ou reserva de emergência. Defina uma meta e faça depósitos regulares!
                 </p>
@@ -578,24 +859,24 @@ canvas{ width:100% !important; height:300px !important; }
                 </div>
                 
                 <div class="form-row">
-                    <input id="github-token" type="password" placeholder="Token do GitHub (Personal Access Token)" style="flex:2" />
+                    <input id="github-token" type="password" placeholder="Token do GitHub" style="width:100%" />
                 </div>
                 <div class="form-row">
-                    <input id="github-repo" type="text" placeholder="Usuário/Repositório (ex: seunome/financeiro)" />
+                    <input id="github-repo" type="text" placeholder="Usuário/Repositório" style="width:100%" />
                 </div>
                 <div class="form-row">
-                    <input id="github-file" type="text" value="dados-financeiros.json" placeholder="Nome do arquivo" />
+                    <input id="github-file" type="text" value="dados-financeiros.json" placeholder="Nome do arquivo" style="width:100%" />
                 </div>
                 
-                <div style="margin-top:16px">
-                    <button class="btn-github" onclick="salvarGitHub()">☁️ Salvar no GitHub</button>
-                    <button class="btn-github" onclick="carregarGitHub()">📥 Carregar do GitHub</button>
-                    <button class="btn-github" onclick="salvarConfigGitHub()">💾 Salvar Configurações</button>
+                <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px">
+                    <button class="btn-github" onclick="salvarGitHub()" style="flex:1;min-width:140px">☁️ Salvar</button>
+                    <button class="btn-github" onclick="carregarGitHub()" style="flex:1;min-width:140px">📥 Carregar</button>
+                    <button class="btn-github" onclick="salvarConfigGitHub()" style="flex:1;min-width:140px">💾 Config</button>
                 </div>
                 
-                <details style="margin-top:20px;padding:16px;background:#fff;border-radius:8px">
-                    <summary style="cursor:pointer;font-weight:700;color:#666">📖 Como configurar?</summary>
-                    <ol style="margin-top:12px;padding-left:20px;color:#666;font-size:14px;line-height:1.8">
+                <details style="margin-top:16px;padding:12px;background:#fff;border-radius:8px">
+                    <summary style="cursor:pointer;font-weight:700;color:#666;font-size:13px">📖 Como configurar?</summary>
+                    <ol style="margin-top:10px;padding-left:18px;color:#666;font-size:12px;line-height:1.7">
                         <li>Acesse <a href="https://github.com/settings/tokens" target="_blank" style="color:var(--primaria)">github.com/settings/tokens</a></li>
                         <li>Clique em "Generate new token" → "Classic"</li>
                         <li>Dê um nome e marque a permissão "repo"</li>
@@ -606,24 +887,24 @@ canvas{ width:100% !important; height:300px !important; }
                 </details>
             </div>
             
-            <div style="background:#f8f9fa;padding:20px;border-radius:12px">
-                <h3 style="margin-bottom:12px">📊 Estatísticas</h3>
-                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
-                    <div style="background:#fff;padding:16px;border-radius:8px">
-                        <small style="color:#666;display:block;margin-bottom:4px">Total de Receitas</small>
-                        <strong id="stat-receitas">0</strong>
+            <div style="background:#f8f9fa;padding:14px;border-radius:10px">
+                <h3 style="margin-bottom:10px;font-size:15px">📊 Estatísticas</h3>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+                    <div style="background:#fff;padding:12px;border-radius:8px">
+                        <small style="color:#666;display:block;margin-bottom:4px;font-size:11px">Total de Receitas</small>
+                        <strong id="stat-receitas" style="font-size:16px">0</strong>
                     </div>
-                    <div style="background:#fff;padding:16px;border-radius:8px">
-                        <small style="color:#666;display:block;margin-bottom:4px">Total de Despesas</small>
-                        <strong id="stat-despesas">0</strong>
+                    <div style="background:#fff;padding:12px;border-radius:8px">
+                        <small style="color:#666;display:block;margin-bottom:4px;font-size:11px">Total de Despesas</small>
+                        <strong id="stat-despesas" style="font-size:16px">0</strong>
                     </div>
-                    <div style="background:#fff;padding:16px;border-radius:8px">
-                        <small style="color:#666;display:block;margin-bottom:4px">Sonhos Ativos</small>
-                        <strong id="stat-sonhos">0</strong>
+                    <div style="background:#fff;padding:12px;border-radius:8px">
+                        <small style="color:#666;display:block;margin-bottom:4px;font-size:11px">Sonhos Ativos</small>
+                        <strong id="stat-sonhos" style="font-size:16px">0</strong>
                     </div>
-                    <div style="background:#fff;padding:16px;border-radius:8px">
-                        <small style="color:#666;display:block;margin-bottom:4px">Última Atualização</small>
-                        <strong id="stat-update" style="font-size:12px">-</strong>
+                    <div style="background:#fff;padding:12px;border-radius:8px">
+                        <small style="color:#666;display:block;margin-bottom:4px;font-size:11px">Última Atualização</small>
+                        <strong id="stat-update" style="font-size:10px">-</strong>
                     </div>
                 </div>
             </div>
@@ -639,7 +920,7 @@ canvas{ width:100% !important; height:300px !important; }
             <button class="btn-close" onclick="fecharModal()">&times;</button>
         </div>
         
-        <p style="color:#666;margin-bottom:16px">Selecione os meses em que deseja replicar esta despesa:</p>
+        <p style="color:#666;margin-bottom:12px;font-size:13px">Selecione os meses em que deseja replicar esta despesa:</p>
         
         <div class="meses-grid" id="meses-grid">
             <div class="mes-checkbox"><input type="checkbox" id="mes-1" value="1"><label for="mes-1">Janeiro</label></div>
@@ -656,9 +937,9 @@ canvas{ width:100% !important; height:300px !important; }
             <div class="mes-checkbox"><input type="checkbox" id="mes-12" value="12"><label for="mes-12">Dezembro</label></div>
         </div>
         
-        <div style="margin-top:24px;display:flex;gap:12px">
-            <button onclick="confirmarRecorrencia()" class="btn-add-despesa" style="flex:1">Confirmar</button>
-            <button onclick="fecharModal()" style="flex:1;padding:12px;border-radius:10px;border:2px solid #e0e0e0;background:#fff;font-weight:700;cursor:pointer">Cancelar</button>
+        <div style="margin-top:16px;display:flex;gap:8px">
+            <button onclick="confirmarRecorrencia()" class="btn-add-despesa" style="flex:1;padding:12px">Confirmar</button>
+            <button onclick="fecharModal()" style="flex:1;padding:12px;border-radius:8px;border:2px solid #e0e0e0;background:#fff;font-weight:700;cursor:pointer;font-size:13px">Cancelar</button>
         </div>
     </div>
 </div>
@@ -671,21 +952,21 @@ canvas{ width:100% !important; height:300px !important; }
             <button class="btn-close" onclick="fecharModalDepositar()">&times;</button>
         </div>
         
-        <p style="color:#666;margin-bottom:16px">Quanto deseja depositar em <strong id="deposito-nome-sonho"></strong>?</p>
+        <p style="color:#666;margin-bottom:12px;font-size:13px">Quanto deseja depositar em <strong id="deposito-nome-sonho"></strong>?</p>
         
         <div class="form-row">
-            <input id="deposito-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" style="width:100%;text-align:center;font-size:20px;padding:16px" />
+            <input id="deposito-valor" type="text" class="valor-input" placeholder="0,00" inputmode="numeric" style="width:100%;text-align:center;font-size:18px;padding:14px" />
         </div>
         
-        <div style="margin-top:24px;display:flex;gap:12px">
-            <button onclick="confirmarDeposito()" class="btn-depositar" style="flex:1">Depositar</button>
-            <button onclick="fecharModalDepositar()" style="flex:1;padding:12px;border-radius:10px;border:2px solid #e0e0e0;background:#fff;font-weight:700;cursor:pointer">Cancelar</button>
+        <div style="margin-top:16px;display:flex;gap:8px">
+            <button onclick="confirmarDeposito()" class="btn-depositar" style="flex:1;padding:12px">Depositar</button>
+            <button onclick="fecharModalDepositar()" style="flex:1;padding:12px;border-radius:8px;border:2px solid #e0e0e0;background:#fff;font-weight:700;cursor:pointer;font-size:13px">Cancelar</button>
         </div>
     </div>
 </div>
 
 <div class="rodape">
-    💾 Dados salvos localmente no navegador | ☁️ Configure o GitHub para sincronizar entre dispositivos
+    💾 Dados salvos localmente | ☁️ Configure o GitHub para sincronizar
 </div>
 
 <script>
@@ -739,7 +1020,6 @@ function escapeHtml(str){
         .replace(/'/g,'&#39;');
 }
 
-// CONFIGURAR INPUTS
 const elRecDesc = document.getElementById('rec-desc');
 const elRecVal = document.getElementById('rec-valor');
 const elDesDesc = document.getElementById('des-desc');
@@ -761,14 +1041,11 @@ const elDepositoVal = document.getElementById('deposito-valor');
     });
 });
 
-// FUNÇÕES DE CÁLCULO
 function calcularTotais(){
-    // Pegar mês atual
-    const mesAtual = new Date().getMonth(); // 0-11
+    const mesAtual = new Date().getMonth();
     const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
     const mesAtualNome = nomesMeses[mesAtual];
     
-    // Filtrar apenas despesas do mês atual ou sem mês definido
     const despesasMesAtual = despesas.filter(d => !d.mes || d.mes === mesAtualNome);
     
     const totalReceitas = receitas.reduce((s,r)=>s + r.valor, 0);
@@ -791,11 +1068,10 @@ function atualizarSaldo(){
     document.getElementById('totalDespesasPendentes').textContent = formatarMoeda(totalDespesasPendentes);
 }
 
-// RECEITAS
 function renderizarReceitas(){
     const el = document.getElementById('lista-receitas');
     if(receitas.length === 0){
-        el.innerHTML = '<div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma receita cadastrada</div>';
+        el.innerHTML = '<div style="padding:16px;color:#666;background:#fff;border-radius:10px;text-align:center;font-size:13px">Nenhuma receita cadastrada</div>';
         return;
     }
     el.innerHTML = receitas.map(r => `
@@ -804,8 +1080,8 @@ function renderizarReceitas(){
                 <div class="descricao">${escapeHtml(r.descricao)}</div>
                 ${r.mes ? `<div class="sub">Mês: ${r.mes}</div>` : ''}
             </div>
-            <div style="display:flex;align-items:center;gap:12px">
-                <div class="valor">${formatarMoeda(r.valor)}</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%">
+                <div class="valor" style="flex:1;min-width:100px">${formatarMoeda(r.valor)}</div>
                 <div class="acoes">
                     <button class="btn-remover" onclick="removerReceita(${r.id})">Remover</button>
                 </div>
@@ -840,24 +1116,21 @@ function removerReceita(id){
     atualizarGrafico();
 }
 
-// DESPESAS
 function renderizarDespesas(){
     const el = document.getElementById('lista-despesas');
     if(despesas.length === 0){
-        el.innerHTML = '<div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma despesa cadastrada</div>';
+        el.innerHTML = '<div style="padding:16px;color:#666;background:#fff;border-radius:10px;text-align:center;font-size:13px">Nenhuma despesa cadastrada</div>';
         return;
     }
     
-    // Pegar mês atual
-    const mesAtual = new Date().getMonth(); // 0-11
+    const mesAtual = new Date().getMonth();
     const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
     const mesAtualNome = nomesMeses[mesAtual];
     
-    // Filtrar apenas despesas do mês atual ou sem mês definido
     const despesasVisiveis = despesas.filter(d => !d.mes || d.mes === mesAtualNome);
     
     if(despesasVisiveis.length === 0){
-        el.innerHTML = '<div style="padding:16px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhuma despesa para este mês</div>';
+        el.innerHTML = '<div style="padding:16px;color:#666;background:#fff;border-radius:10px;text-align:center;font-size:13px">Nenhuma despesa para este mês</div>';
         return;
     }
     
@@ -867,8 +1140,8 @@ function renderizarDespesas(){
                 <div class="descricao">${escapeHtml(d.descricao)}</div>
                 ${d.mes ? `<div class="sub">Mês: ${d.mes}</div>` : ''}
             </div>
-            <div style="display:flex;align-items:center;gap:12px">
-                <div class="valor">${formatarMoeda(d.valor)}</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%">
+                <div class="valor" style="flex:1;min-width:100px">${formatarMoeda(d.valor)}</div>
                 <div class="acoes">
                     ${d.paga 
                         ? `<button class="btn-desfazer" onclick="desfazerPagamento(${d.id})">Desfazer</button>`
@@ -931,7 +1204,6 @@ function removerDespesa(id){
     const despesa = despesas.find(d => d.id === id);
     if(!despesa) return;
     
-    // Se for uma despesa com mês definido, perguntar se quer remover todas as recorrências
     if(despesa.mes){
         const todasRecorrentes = despesas.filter(d => d.descricao === despesa.descricao && d.valor === despesa.valor && d.mes);
         if(todasRecorrentes.length > 1){
@@ -956,7 +1228,6 @@ function removerDespesa(id){
     atualizarGrafico();
 }
 
-// RECORRÊNCIA
 function fecharModal(){
     document.getElementById('modalRecorrencia').classList.remove('show');
     despesaRecorrente = null;
@@ -1002,11 +1273,10 @@ function confirmarRecorrencia(){
     fecharModal();
 }
 
-// SONHOS
 function renderizarSonhos(){
     const el = document.getElementById('lista-sonhos');
     if(sonhos.length === 0){
-        el.innerHTML = '<div style="padding:24px;color:#666;background:#fff;border-radius:12px;text-align:center">Nenhum sonho criado ainda. Comece a planejar seus objetivos!</div>';
+        el.innerHTML = '<div style="padding:20px;color:#666;background:#fff;border-radius:10px;text-align:center;font-size:13px">Nenhum sonho criado ainda. Comece a planejar seus objetivos!</div>';
         return;
     }
     
@@ -1030,7 +1300,7 @@ function renderizarSonhos(){
                 <div class="sonho-info">
                     <span style="font-weight:700;color:var(--roxo)">${progresso.toFixed(1)}% concluído</span>
                 </div>
-                <div style="margin-top:12px">
+                <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
                     ${!completo ? `<button class="btn-depositar" onclick="abrirModalDepositar(${s.id})">Depositar</button>` : ''}
                     <button class="btn-remover" onclick="removerSonho(${s.id})">Remover</button>
                 </div>
@@ -1098,7 +1368,6 @@ function removerSonho(id){
     renderizarSonhos();
 }
 
-// GRÁFICO
 let pizzaGrafico = null;
 function atualizarGrafico(){
     const { totalReceitas, totalDespesasPagas } = calcularTotais();
@@ -1116,7 +1385,12 @@ function atualizarGrafico(){
     
     const options = {
         plugins: {
-            legend: { position: 'bottom' },
+            legend: { 
+                position: 'bottom',
+                labels: {
+                    font: { size: 12 }
+                }
+            },
             tooltip: { 
                 callbacks: {
                     label: ctx => `${ctx.label}: ${formatarMoeda(ctx.raw)}`
@@ -1131,7 +1405,6 @@ function atualizarGrafico(){
     pizzaGrafico = new Chart(ctx, { type: 'pie', data, options });
 }
 
-// NAVEGAÇÃO
 function mudarAba(aba){
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -1140,7 +1413,6 @@ function mudarAba(aba){
     document.getElementById(aba).classList.add('active');
 }
 
-// EXPORTAR
 function exportarJSON(){
     const dados = { receitas, despesas, sonhos, exportadoEm: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
@@ -1165,7 +1437,6 @@ function limparTudo(){
     atualizarGrafico();
 }
 
-// GITHUB
 function salvarConfigGitHub(){
     configGitHub = {
         token: document.getElementById('github-token').value.trim(),
@@ -1194,7 +1465,6 @@ async function salvarGitHub(){
         const dados = { receitas, despesas, sonhos, atualizadoEm: new Date().toISOString() };
         const conteudo = btoa(unescape(encodeURIComponent(JSON.stringify(dados, null, 2))));
         
-        // Verificar se arquivo existe
         let sha = null;
         try {
             const checkRes = await fetch(`https://api.github.com/repos/${configGitHub.repo}/contents/${configGitHub.file}`, {
@@ -1225,46 +1495,6 @@ async function salvarGitHub(){
             mostrarStatus('✅ Dados salvos no GitHub com sucesso!', 'success');
         } else {
             const erro = await res.json();
-            mostrarStatus(`❌ Erro: ${erro.message}`, 'error');
-        }
-    } catch(e){
-        mostrarStatus(`❌ Erro ao conectar: ${e.message}`, 'error');
-    }
-}
-
-async function carregarGitHub(){
-    if(!configGitHub.token || !configGitHub.repo){
-        mostrarStatus('Configure o GitHub primeiro!', 'error');
-        return;
-    }
-    
-    mostrarStatus('⏳ Carregando do GitHub...', 'info');
-    
-    try {
-        const res = await fetch(`https://api.github.com/repos/${configGitHub.repo}/contents/${configGitHub.file}`, {
-            headers: { 'Authorization': `token ${configGitHub.token}` }
-        });
-        
-        if(!res.ok){
-            mostrarStatus('❌ Arquivo não encontrado no GitHub', 'error');
-            return;
-        }
-        
-        const data = await res.json();
-        const conteudo = decodeURIComponent(escape(atob(data.content)));
-        const dados = JSON.parse(conteudo);
-        
-        if(confirm('⚠️ Isso vai substituir seus dados locais. Continuar?')){
-            receitas = dados.receitas || [];
-            despesas = dados.despesas || [];
-            sonhos = dados.sonhos || [];
-            salvar();
-            renderizarReceitas();
-            renderizarDespesas();
-            renderizarSonhos();
-            atualizarSaldo();
-            atualizarGrafico();
-            mostrarStatus('✅ Dados carregados com sucesso!', 'success');
         }
     } catch(e){
         mostrarStatus(`❌ Erro: ${e.message}`, 'error');
